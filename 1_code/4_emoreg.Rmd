@@ -1,0 +1,423 @@
+---
+title: "Candidacy project: Load in data and make SEM output for emotion dysregulation data"
+author: "Julianna Calabrese"
+date: "January 11th, 2023"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Prepwork
+
+```{r}
+set.seed(1227)
+setwd("/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis")
+```
+
+```{r}
+#install.packages("Rtools")
+#install.packages(c('devtools', 'curl'))
+#library('devtools')
+#devtools::install_github("simsem/semTools/semTools")
+#install.packages("lavaan", repos = "http://www.da.ugent.be", type = "source")
+```
+
+```{r}
+library(semTools)
+library(lavaan)
+library(tidyverse)
+library(simsem)
+library(mice)
+library(miceadds)
+library(semPlot)
+library(lavaanPlot)
+
+library(ggmice)
+library(micemd)
+library(cowplot)
+library(parameters)
+library(performance)
+
+options(scipen = 999) # avoids scientific notation
+```
+
+# Load all mids objects
+
+```{r}
+# Small
+load("0_data/processed_emoreg/small.mi1/small.mi1.Rdata")
+small.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_emoreg/small.mi2/small.mi2.Rdata")
+small.mi2 <- mi.res
+rm(mi.res)
+
+# Medium
+load("0_data/processed_emoreg/medium.mi1/medium.mi1.Rdata")
+medium.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_emoreg/medium.mi2/medium.mi2.Rdata")
+medium.mi2 <- mi.res
+rm(mi.res)
+
+# Large
+load("0_data/processed_emoreg/large.mi1/large.mi1.Rdata")
+large.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_emoreg/large.mi2/large.mi2.Rdata")
+large.mi2 <- mi.res
+rm(mi.res)
+```
+
+# Load non-imputed data
+
+```{r}
+small <- read.csv("0_data/processed_emoreg/small.csv")
+medium <- read.csv("0_data/processed_emoreg/medium.csv")
+large <- read.csv("0_data/processed_emoreg/large.csv")
+```
+
+# Conduct linear regression on multiply imputed data
+
+```{r}
+## Matrix 1
+small.lm1 <- 
+  with(small.mi1, 
+       lm(CBCL_EmoDysreg_Total ~ 
+            Coparent_Total_Mother + 
+            Coparent_Total_Father))
+
+medium.lm1 <- 
+  with(medium.mi1, 
+       lm(CBCL_EmoDysreg_Total ~ 
+            Coparent_Total_Mother + 
+            Coparent_Total_Father))
+
+large.lm1 <- 
+  with(large.mi1, 
+       lm(CBCL_EmoDysreg_Total ~ 
+            Coparent_Total_Mother + 
+            Coparent_Total_Father))
+
+## Matrix 2
+small.lm2 <- 
+  with(small.mi2, 
+       lm(CBCL_EmoDysreg_Total ~ 
+            Coparent_Total_Mother + 
+            Coparent_Total_Father))
+
+medium.lm2 <- 
+  with(medium.mi1, 
+       lm(CBCL_EmoDysreg_Total ~ 
+            Coparent_Total_Mother + 
+            Coparent_Total_Father))
+
+large.lm2 <- 
+  with(large.mi2, 
+       lm(CBCL_EmoDysreg_Total ~ 
+            Coparent_Total_Mother + 
+            Coparent_Total_Father))
+```
+
+# Conduct linear regression on non-imputed data
+
+```{r}
+# Listwise Deletion
+small.lm0 <- lm(CBCL_EmoDysreg_Total ~ Coparent_Total_Mother + Coparent_Total_Father, data = small)
+medium.lm0 <- lm(CBCL_EmoDysreg_Total ~ Coparent_Total_Mother + Coparent_Total_Father, data = medium)
+large.lm0 <- lm(CBCL_EmoDysreg_Total ~ Coparent_Total_Mother + Coparent_Total_Father, data = large)
+```
+
+# Check models
+
+## Imputed models
+
+### Matrix 1
+
+```{r}
+smalllm1fit <- tidy(pool(small.lm1))
+options(width = 100)
+capture.output(smalllm1fit, file = "2_output/emoreg/imputed_output/smalllm1fit.txt")
+
+smalllm1fitr2 <- pool.r.squared(small.lm1)
+capture.output(smalllm1fitr2, file = "2_output/emoreg/imputed_output/smalllm1fitr2.txt")
+
+pool.r.squared(small.lm1)
+```
+
+```{r}
+mediumlm1fit <- tidy(pool(medium.lm1))
+options(width = 100)
+capture.output(mediumlm1fit, file = "2_output/emoreg/imputed_output/mediumlm1fit.txt")
+
+mediumlm1fitr2 <- pool.r.squared(medium.lm1)
+capture.output(mediumlm1fitr2, file = "2_output/emoreg/imputed_output/mediumlm1fitr2.txt")
+
+pool.r.squared(medium.lm1)
+```
+
+```{r}
+largelm1fit <- tidy(pool(large.lm1))
+options(width = 100)
+capture.output(largelm1fit, file = "2_output/emoreg/imputed_output/largelm1fit.txt")
+
+largelm1fitr2 <- pool.r.squared(large.lm1)
+capture.output(largelm1fitr2, file = "2_output/emoreg/imputed_output/largelm1fitr2.txt")
+
+pool.r.squared(large.lm1)
+```
+
+### Matrix 2
+
+```{r}
+smalllm2fit <- tidy(pool(small.lm2))
+options(width = 100)
+capture.output(smalllm2fit, file = "2_output/emoreg/imputed_output/smalllm2fit.txt")
+
+smalllm2fitr2 <- pool.r.squared(small.lm2)
+capture.output(smalllm2fitr2, file = "2_output/emoreg/imputed_output/smalllm2fitr2.txt")
+```
+
+```{r}
+mediumlm2fit <- tidy(pool(medium.lm2))
+options(width = 100)
+capture.output(mediumlm2fit, file = "2_output/emoreg/imputed_output/mediumlm2fit.txt")
+
+mediumlm2fitr2 <- pool.r.squared(medium.lm2)
+capture.output(mediumlm2fitr2, file = "2_output/emoreg/imputed_output/mediumlm2fitr2.txt")
+```
+
+```{r}
+largelm2fit <- tidy(pool(large.lm2))
+options(width = 100)
+capture.output(largelm2fit, file = "2_output/emoreg/imputed_output/largelm2fit.txt")
+
+largelm2fitr2 <- pool.r.squared(large.lm2)
+capture.output(largelm2fitr2, file = "2_output/emoreg/imputed_output/largelm2fitr2.txt")
+```
+
+## Non-imputed models
+
+### Listwise
+
+```{r}
+smalllm0fit <- summary(small.lm0)
+options(width = 100)
+capture.output(smalllm0fit, file = "2_output/emoreg/nonimputed_output/smalllm0fit.txt")
+```
+
+```{r}
+mediumlm0fit <- summary(medium.lm0)
+options(width = 100)
+capture.output(mediumlm0fit, file = "2_output/emoreg/nonimputed_output/mediumlm0fit.txt")
+```
+
+```{r}
+largelm0fit <- summary(large.lm0)
+options(width = 100)
+capture.output(largelm0fit, file = "2_output/emoreg/nonimputed_output/largelm0fit.txt")
+```
+
+# Plot models
+
+## Imputed models
+
+### Matrix 1
+
+```{r}
+p1 <- ggmice(small.mi1, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Mother)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+p2 <- ggmice(small.mi1, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Father)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+title <- ggdraw() + draw_label("Small Model 1", fontface = 'bold') + 
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+pp <- plot_grid(p1, p2)
+myplot <- plot_grid(title, pp, ncol = 1, rel_heights = c(0.1, 1))  + 
+  theme(plot.background = element_rect(fill="#FFFFFF", color = NA))
+
+save_plot(
+  filename = "2_output/emoreg/imputed_output/smalllm1plot.tiff",
+  plot = myplot)
+```
+
+```{r}
+p1 <- ggmice(medium.mi1, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Mother)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+p2 <- ggmice(medium.mi1, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Father)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+title <- ggdraw() + draw_label("Medium Model 1", fontface = 'bold') + 
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+pp <- plot_grid(p1, p2)
+myplot <- plot_grid(title, pp, ncol = 1, rel_heights = c(0.1, 1))  + 
+  theme(plot.background = element_rect(fill="#FFFFFF", color = NA))
+
+save_plot(
+  filename = "2_output/emoreg/imputed_output/mediumlm1plot.tiff",
+  plot = myplot)
+```
+
+```{r}
+p1 <- ggmice(large.mi1, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Mother)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+p2 <- ggmice(large.mi1, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Father)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+title <- ggdraw() + draw_label("Large Model 1", fontface = 'bold') + 
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+pp <- plot_grid(p1, p2)
+myplot <- plot_grid(title, pp, ncol = 1, rel_heights = c(0.1, 1))  + 
+  theme(plot.background = element_rect(fill="#FFFFFF", color = NA))
+
+save_plot(
+  filename = "2_output/emoreg/imputed_output/largelm1plot.tiff",
+  plot = myplot)
+```
+
+## Matrix 2
+
+```{r}
+p1 <- ggmice(small.mi2, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Mother)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+p2 <- ggmice(small.mi2, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Father)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+title <- ggdraw() + draw_label("Small Model 2", fontface = 'bold') + 
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+pp <- plot_grid(p1, p2)
+myplot <- plot_grid(title, pp, ncol = 1, rel_heights = c(0.1, 1))  + 
+  theme(plot.background = element_rect(fill="#FFFFFF", color = NA))
+
+save_plot(
+  filename = "2_output/emoreg/imputed_output/smalllm2plot.tiff",
+  plot = myplot)
+```
+
+```{r}
+p1 <- ggmice(medium.mi2, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Mother)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+p2 <- ggmice(medium.mi2, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Father)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+title <- ggdraw() + draw_label("Medium Model 2", fontface = 'bold') + 
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+pp <- plot_grid(p1, p2)
+myplot <- plot_grid(title, pp, ncol = 1, rel_heights = c(0.1, 1))  + 
+  theme(plot.background = element_rect(fill="#FFFFFF", color = NA))
+
+save_plot(
+  filename = "2_output/emoreg/imputed_output/mediumlm2plot.tiff",
+  plot = myplot)
+```
+
+```{r}
+p1 <- ggmice(large.mi2, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Mother)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+p2 <- ggmice(large.mi2, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Father)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+title <- ggdraw() + draw_label("Large Model 2", fontface = 'bold') + 
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+pp <- plot_grid(p1, p2)
+myplot <- plot_grid(title, pp, ncol = 1, rel_heights = c(0.1, 1))  + 
+  theme(plot.background = element_rect(fill="#FFFFFF", color = NA))
+
+save_plot(
+  filename = "2_output/emoreg/imputed_output/largelm2plot.tiff",
+  plot = myplot)
+```
+
+## Non-imputed models
+
+### Listwise Deletion
+
+```{r}
+p1 <- ggplot(small, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Mother)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+p2 <- ggplot(small, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Father)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+title <- ggdraw() + draw_label("Small Model 0", fontface = 'bold') + 
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+pp <- plot_grid(p1, p2)
+myplot <- plot_grid(title, pp, ncol = 1, rel_heights = c(0.1, 1))  + 
+  theme(plot.background = element_rect(fill="#FFFFFF", color = NA))
+
+save_plot(
+  filename = "2_output/emoreg/nonimputed_output/smalllm0plot.tiff",
+  plot = myplot)
+```
+
+```{r}
+p1 <- ggplot(medium, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Mother)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+p2 <- ggplot(medium, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Father)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+title <- ggdraw() + draw_label("Medium Model 0", fontface = 'bold') + 
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+pp <- plot_grid(p1, p2)
+myplot <- plot_grid(title, pp, ncol = 1, rel_heights = c(0.1, 1))  + 
+  theme(plot.background = element_rect(fill="#FFFFFF", color = NA))
+
+save_plot(
+  filename = "2_output/emoreg/nonimputed_output/mediumlm0plot.tiff",
+  plot = myplot)
+```
+
+```{r}
+p1 <- ggplot(large, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Mother)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+p2 <- ggplot(large, aes(x = CBCL_EmoDysreg_Total, y = Coparent_Total_Father)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+title <- ggdraw() + draw_label("Large Model 0", fontface = 'bold') + 
+  theme(plot.margin = margin(0, 0, 0, 7))
+
+pp <- plot_grid(p1, p2)
+myplot <- plot_grid(title, pp, ncol = 1, rel_heights = c(0.1, 1))  + 
+  theme(plot.background = element_rect(fill="#FFFFFF", color = NA))
+
+save_plot(
+  filename = "2_output/emoreg/nonimputed_output/largelm0plot.tiff",
+  plot = myplot)
+```

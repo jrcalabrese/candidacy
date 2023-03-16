@@ -1,0 +1,433 @@
+---
+title: "Candidacy project: Load in data and make SEM output for emotion dysregulation data"
+author: "Julianna Calabrese"
+date: "January 11th, 2023"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Prepwork
+
+```{r}
+set.seed(1227)
+setwd("/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis")
+```
+
+```{r}
+#install.packages("Rtools")
+#install.packages(c('devtools', 'curl'))
+#library('devtools')
+#devtools::install_github("simsem/semTools/semTools")
+#install.packages("lavaan", repos = "http://www.da.ugent.be", type = "source")
+```
+
+```{r}
+library(semTools)
+library(lavaan)
+library(tidyverse)
+library(simsem)
+library(mice)
+library(miceadds)
+library(semPlot)
+library(lavaanPlot)
+library(officer)
+library(psych)
+library(rrtable)
+
+library(ggmice)
+library(micemd)
+library(gtsummary)
+library(expss)
+library(flextable)
+library(devtools)
+#install_github("jrcalabrese/missy")
+library(missy)
+library(docxtractr)
+library(janitor)
+
+options(scipen = 999) # avoids scientific notation
+```
+
+# T-tests
+
+## Load APIM data 
+
+```{r}
+# Small
+load("0_data/processed_apim/small.mi1/small.mi1.Rdata")
+apimsmall.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/small.mi2/small.mi2.Rdata")
+apimsmall.mi2 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/small.mi3/small.mi3.Rdata")
+apimsmall.mi3 <- mi.res
+rm(mi.res)
+
+# Medium
+load("0_data/processed_apim/medium.mi1/medium.mi1.Rdata")
+apimmedium.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/medium.mi2/medium.mi2.Rdata")
+apimmedium.mi2 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/medium.mi3/medium.mi3.Rdata")
+apimmedium.mi3 <- mi.res
+rm(mi.res)
+
+# Large
+load("0_data/processed_apim/large.mi1/large.mi1.Rdata")
+apimlarge.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/large.mi2/large.mi2.Rdata")
+apimlarge.mi2 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/large.mi3/large.mi3.Rdata")
+apimlarge.mi3 <- mi.res
+rm(mi.res)
+
+# Add grouping variable
+rename_me <- function(test, word) {
+  word <- as.character(word)
+  test <- mice::complete(test, action = "long", include = TRUE)
+  test$group <- word
+  test <- as.mids(test, .imp = ".imp", .id = ".id")
+  return(test)
+}
+
+apimsmall.mi1 <- rename_me(apimsmall.mi1, "small1")
+apimsmall.mi2 <- rename_me(apimsmall.mi1, "small2")
+apimsmall.mi3 <- rename_me(apimsmall.mi1, "small3")
+
+apimmedium.mi1 <- rename_me(apimmedium.mi1, "medium1")
+apimmedium.mi2 <- rename_me(apimmedium.mi1, "medium2")
+apimmedium.mi3 <- rename_me(apimmedium.mi1, "medium3")
+
+apimlarge.mi1 <- rename_me(apimlarge.mi1, "large1")
+apimlarge.mi2 <- rename_me(apimlarge.mi1, "large2")
+apimlarge.mi3 <- rename_me(apimlarge.mi1, "large3")
+
+# Clean up!
+myvars <- apimlarge.mi1$data %>% select(contains("Total")) %>% names()
+myvars <- append(myvars, "group")
+
+apimsmall.mi1 <- datalist2mids(subset_datlist(apimsmall.mi1, select = myvars))
+apimsmall.mi2 <- datalist2mids(subset_datlist(apimsmall.mi2, select = myvars))
+apimsmall.mi3 <- datalist2mids(subset_datlist(apimsmall.mi3, select = myvars))
+
+apimmedium.mi1 <- datalist2mids(subset_datlist(apimmedium.mi1, select = myvars))
+apimmedium.mi2 <- datalist2mids(subset_datlist(apimmedium.mi2, select = myvars))
+apimmedium.mi3 <- datalist2mids(subset_datlist(apimmedium.mi3, select = myvars))
+
+apimlarge.mi1 <- datalist2mids(subset_datlist(apimlarge.mi1, select = myvars))
+apimlarge.mi2 <- datalist2mids(subset_datlist(apimlarge.mi2, select = myvars))
+apimlarge.mi3 <- datalist2mids(subset_datlist(apimlarge.mi3, select = myvars))
+rm(myvars)
+rm(rename_me)
+```
+
+## Difference between matrices
+
+```{r}
+# small
+small <- rbind(apimsmall.mi1, apimsmall.mi2)
+small <- rbind(small, apimsmall.mi3)
+table(small$data$group)
+
+mi.anova(mi.res = small, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = small, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = small, formula = "Depression_Total_Mother ~ group")
+mi.anova(mi.res = small, formula = "Depression_Total_Father ~ group")
+
+# medium
+medium <- rbind(apimmedium.mi1, apimmedium.mi2, apimmedium.mi3)
+medium <- rbind(medium, apimmedium.mi3)
+mi.anova(mi.res = medium, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = medium, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = medium, formula = "Depression_Total_Mother ~ group")
+mi.anova(mi.res = medium, formula = "Depression_Total_Father ~ group")
+
+# large
+large <- rbind(apimlarge.mi1, apimlarge.mi2)
+large <- rbind(large, apimlarge.mi3)
+mi.anova(mi.res = large, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = large, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = large, formula = "Depression_Total_Mother ~ group")
+mi.anova(mi.res = large, formula = "Depression_Total_Father ~ group")
+```
+
+## Differences between sample sizes
+
+```{r}
+# mat1
+mat1 <- rbind(apimsmall.mi1, apimmedium.mi1)
+mat1 <- rbind(mat1, apimlarge.mi1)
+mi.anova(mi.res = mat1, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = mat1, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = mat1, formula = "Depression_Total_Mother ~ group")
+mi.anova(mi.res = mat1, formula = "Depression_Total_Father ~ group")
+
+mat2 <- rbind(apimsmall.mi2, apimmedium.mi2)
+mat2 <- rbind(mat2, apimlarge.mi2)
+mi.anova(mi.res = mat2, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = mat2, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = mat2, formula = "Depression_Total_Mother ~ group") 
+mi.anova(mi.res = mat2, formula = "Depression_Total_Father ~ group")
+
+mat3 <- rbind(apimsmall.mi3, apimmedium.mi3)
+mat3 <- rbind(mat3, apimlarge.mi3)
+mi.anova(mi.res = mat3, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = mat3, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = mat3, formula = "Depression_Total_Mother ~ group") 
+mi.anova(mi.res = mat3, formula = "Depression_Total_Father ~ group") 
+```
+
+
+## Load Emo Reg data 
+
+```{r}
+# Small
+load("0_data/processed_emoreg/small.mi1/small.mi1.Rdata")
+emoregsmall.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_emoreg/small.mi2/small.mi2.Rdata")
+emoregsmall.mi2 <- mi.res
+rm(mi.res)
+
+# Medium
+load("0_data/processed_emoreg/medium.mi1/medium.mi1.Rdata")
+emoregmedium.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_emoreg/medium.mi2/medium.mi2.Rdata")
+emoregmedium.mi2 <- mi.res
+rm(mi.res)
+
+# Large
+load("0_data/processed_emoreg/large.mi1/large.mi1.Rdata")
+emoreglarge.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_emoreg/large.mi2/large.mi2.Rdata")
+emoreglarge.mi2 <- mi.res
+rm(mi.res)
+
+# Add grouping variable
+rename_me <- function(test, word) {
+  word <- as.character(word)
+  test <- mice::complete(test, action = "long", include = TRUE)
+  test$group <- word
+  test <- as.mids(test, .imp = ".imp", .id = ".id")
+  return(test)
+}
+
+emoregsmall.mi1 <- rename_me(emoregsmall.mi1, "small1")
+emoregsmall.mi2 <- rename_me(emoregsmall.mi1, "small2")
+
+emoregmedium.mi1 <- rename_me(emoregmedium.mi1, "medium1")
+emoregmedium.mi2 <- rename_me(emoregmedium.mi1, "medium2")
+
+emoreglarge.mi1 <- rename_me(emoreglarge.mi1, "large1")
+emoreglarge.mi2 <- rename_me(emoreglarge.mi1, "large2")
+
+# Clean up!
+myvars <- emoreglarge.mi1$data %>% select(contains("Total")) %>% names()
+myvars <- append(myvars, "group")
+
+emoregsmall.mi1 <- datalist2mids(subset_datlist(emoregsmall.mi1, select = myvars))
+emoregsmall.mi2 <- datalist2mids(subset_datlist(emoregsmall.mi2, select = myvars))
+
+emoregmedium.mi1 <- datalist2mids(subset_datlist(emoregmedium.mi1, select = myvars))
+emoregmedium.mi2 <- datalist2mids(subset_datlist(emoregmedium.mi2, select = myvars))
+
+emoreglarge.mi1 <- datalist2mids(subset_datlist(emoreglarge.mi1, select = myvars))
+emoreglarge.mi2 <- datalist2mids(subset_datlist(emoreglarge.mi2, select = myvars))
+rm(myvars)
+rm(rename_me)
+```
+
+## Difference between matrices
+
+```{r}
+# small
+small <- rbind(emoregsmall.mi1, emoregsmall.mi2)
+mi.anova(mi.res = small, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = small, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = small, formula = "CBCL_EmoDysreg_Total ~ group")
+
+# medium
+medium <- rbind(emoregmedium.mi1, emoregmedium.mi2)
+mi.anova(mi.res = medium, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = medium, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = medium, formula = "CBCL_EmoDysreg_Total ~ group")
+
+# large
+large <- rbind(emoreglarge.mi1, emoreglarge.mi2)
+mi.anova(mi.res = large, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = large, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = large, formula = "CBCL_EmoDysreg_Total ~ group")
+```
+
+## Differences between sample sizes
+
+```{r}
+# mat1
+mat1 <- rbind(emoregsmall.mi1, emoregmedium.mi1)
+mat1 <- rbind(mat1, emoreglarge.mi1)
+mi.anova(mi.res = mat1, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = mat1, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = mat1, formula = "CBCL_EmoDysreg_Total ~ group")
+
+mat2 <- rbind(emoregsmall.mi2, emoregmedium.mi2)
+mat2 <- rbind(mat2, emoreglarge.mi2)
+mi.anova(mi.res = mat2, formula = "Coparent_Total_Mother ~ group")
+mi.anova(mi.res = mat2, formula = "Coparent_Total_Father ~ group")
+mi.anova(mi.res = mat2, formula = "CBCL_EmoDysreg_Total ~ group")
+```
+
+```{r}
+rm(list = ls())
+```
+
+# Cronbach's alpha
+
+## APIM
+
+```{r}
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/imputed_output", 
+                 pattern = "alpha",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/imputed_output", 
+                 pattern = "alpha",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Remove first row and rename all columns
+tables <- lapply(tables, tail, -1)
+tables <- lapply(tables, head, 1)
+tables <- lapply(tables, setNames, c("RemoveMe", "value"))
+tables <- lapply(tables, function(x) {x <- x %>% select(-RemoveMe)})
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+alphadf <- tables
+rm(tablelist, filelist, namelist, tables)
+```
+
+## Visualize APIM data
+
+```{r}
+alphadf <- alphadf %>%
+  mutate(value = as.numeric(value)) %>%
+  mutate(variable = sub("^[^_]*_", "", name)) %>%
+  mutate(size = sub("\\mi.*", "", name)) %>%
+  mutate(matrix = parse_number(name))
+
+alphadf %>% 
+  ggplot(aes(x = variable, y = value, fill = size)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~matrix)
+```
+
+```{r}
+x <- alphadf %>%
+  filter(variable == "coparentdad") %>%
+  select(value)
+View(x)
+
+x <- alphadf %>%
+  filter(variable == "coparentmom") %>%
+  select(value)
+View(x)
+
+x <- alphadf %>%
+  filter(variable == "depressiondad") %>%
+  select(value)
+View(x)
+
+x <- alphadf %>%
+  filter(variable == "depressionmom") %>%
+  select(value)
+View(x)
+```
+
+```{r}
+rm(list = ls())
+```
+
+## Emo Reg
+
+```{r}
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/imputed_output", 
+                 pattern = "alpha",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/imputed_output", 
+                 pattern = "alpha",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Remove first row and rename all columns
+tables <- lapply(tables, tail, -1)
+tables <- lapply(tables, head, 1)
+tables <- lapply(tables, setNames, c("RemoveMe", "value"))
+tables <- lapply(tables, function(x) {x <- x %>% select(-RemoveMe)})
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+alphadf <- tables
+rm(tablelist, filelist, namelist, tables)
+```
+
+## Visualize Emo Reg
+
+```{r}
+alphadf <- alphadf %>%
+  mutate(value = as.numeric(value)) %>%
+  mutate(variable = sub("^[^_]*_", "", name)) %>%
+  mutate(size = sub("\\mi.*", "", name)) %>%
+  mutate(matrix = parse_number(name))
+```
+
+```{r}
+alphadf %>% 
+  ggplot(aes(x = variable, y = value, fill = size)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~matrix)
+```
+
+```{r}
+x <- alphadf %>%
+  filter(variable == "coparentdad") %>%
+  select(value)
+View(x)
+
+x <- alphadf %>%
+  filter(variable == "coparentmom") %>%
+  select(value)
+View(x)
+
+x <- alphadf %>%
+  filter(variable == "cbclkid") %>%
+  select(value)
+View(x)
+```
+
+```{r}
+rm(list = ls())
+```

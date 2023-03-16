@@ -1,0 +1,55 @@
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Regressions:
+                          Estimate  Std.Err  t-value       df  P(>|t|)
+  Coparent_Total_Mother ~                                             
+    Dprs_T_M  (a1)          -0.253    0.155   -1.637  915.967    0.102
+  Coparent_Total_Father ~                                             
+    Dprs_T_F  (a2)          -0.434    0.135   -3.204   67.585    0.002
+  Coparent_Total_Mother ~                                             
+    Dprs_T_F (p12)          -0.095    0.181   -0.525   98.851    0.601
+  Coparent_Total_Father ~                                             
+    Dprs_T_M (p21)           0.020    0.115    0.170  109.573    0.866
+
+Covariances:
+                             Estimate  Std.Err  t-value       df  P(>|t|)
+  Depression_Total_Mother ~~                                             
+    Dprss_T_F (cx)              0.004    0.004    1.049   94.310    0.297
+ .Coparent_Total_Mother ~~                                               
+   .Cprnt_T_F (cy)              0.124    0.026    4.683  118.512    0.000
+
+Intercepts:
+                   Estimate  Std.Err  t-value       df  P(>|t|)
+    Dprs_T_M (mx1)    0.121    0.017    7.345 2866.000    0.000
+    Dprs_T_F (mx2)    0.084    0.014    5.943  128.078    0.000
+   .Cprn_T_M (my1)    3.443    0.050   68.793  865.327    0.000
+   .Cprn_T_F (my2)    3.711    0.037   99.257  132.186    0.000
+
+Variances:
+                   Estimate  Std.Err  t-value       df  P(>|t|)
+    Dprs_T_M (vx1)    0.082    0.007   12.300  519.252    0.000
+    Dprs_T_F (vx2)    0.060    0.005   12.265   33.767    0.000
+   .Cprn_T_M (vy1)    0.593    0.048   12.295  166.523    0.000
+   .Cprn_T_F (vy2)    0.331    0.027   12.273   40.118    0.000
+
+Defined Parameters:
+                   Estimate  Std.Err  t-value       df  P(>|t|)
+    a_diff            0.181    0.207    0.872  148.224    0.385
+    p_diff           -0.115    0.217   -0.530   86.256    0.598
+    k1                0.382    0.768    0.497  192.783    0.620
+    k2               -0.037    0.445   -0.083  136.131    0.934
+    k_diff            0.419    0.929    0.451  162.133    0.653
+    i_diff           -0.268    0.053   -5.012  120.690    0.000
+    a_ave            -0.343    0.102   -3.371  149.466    0.001
+    p_ave            -0.038    0.107   -0.354  125.218    0.724
+    i_ave             3.577    0.035  101.701 1186.303    0.000
+    sum1             -0.174    0.116   -1.507  138.726    0.134
+    sum2             -0.207    0.086   -2.399   96.950    0.018
+    cont1            -0.158    0.245   -0.644  200.817    0.521
+    cont2            -0.453    0.183   -2.477   69.796    0.016
+

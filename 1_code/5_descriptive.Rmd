@@ -1,0 +1,1147 @@
+---
+title: "Candidacy project: Load in data and make SEM output for emotion dysregulation data"
+author: "Julianna Calabrese"
+date: "January 11th, 2023"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Prepwork
+
+```{r}
+set.seed(1227)
+setwd("/Users/calabrese.75/OneDrive - The Ohio State University/candidacy/data_analysis")
+```
+
+```{r}
+#install.packages("Rtools")
+#install.packages(c('devtools', 'curl'))
+#library('devtools')
+#devtools::install_github("simsem/semTools/semTools")
+#install.packages("lavaan", repos = "http://www.da.ugent.be", type = "source")
+```
+
+```{r}
+library(semTools)
+library(lavaan)
+library(tidyverse)
+library(simsem)
+library(mice)
+library(miceadds)
+library(semPlot)
+library(lavaanPlot)
+library(officer)
+library(psych)
+library(rrtable)
+
+library(ggmice)
+library(micemd)
+library(gtsummary)
+library(expss)
+library(flextable)
+library(devtools)
+#install_github("jrcalabrese/missy")
+library(missy)
+
+options(scipen = 99999) # avoids scientific notation
+```
+
+# Load all mids objects
+
+## Raw and generated datasets
+
+```{r}
+small_apim <- read.csv("0_data/processed_apim/small.csv")
+medium_apim <- read.csv("0_data/processed_apim/medium.csv")
+large_apim <- read.csv("0_data/processed_apim/large.csv")
+original_apim <- read.csv("0_data/processed_apim/original_apim_df.csv")
+
+small_emoreg <- read.csv("0_data/processed_emoreg/small.csv")
+medium_emoreg <- read.csv("0_data/processed_emoreg/medium.csv")
+large_emoreg <- read.csv("0_data/processed_emoreg/large.csv")
+original_emoreg <- read.csv("0_data/processed_emoreg/original_emoreg_df.csv")
+```
+
+## APIM
+
+```{r}
+# Small
+load("0_data/processed_apim/small.mi1/small.mi1.Rdata")
+apimsmall.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/small.mi2/small.mi2.Rdata")
+apimsmall.mi2 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/small.mi3/small.mi3.Rdata")
+apimsmall.mi3 <- mi.res
+rm(mi.res)
+
+# Medium
+load("0_data/processed_apim/medium.mi1/medium.mi1.Rdata")
+apimmedium.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/medium.mi2/medium.mi2.Rdata")
+apimmedium.mi2 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/medium.mi3/medium.mi3.Rdata")
+apimmedium.mi3 <- mi.res
+rm(mi.res)
+
+# Large
+load("0_data/processed_apim/large.mi1/large.mi1.Rdata")
+apimlarge.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/large.mi2/large.mi2.Rdata")
+apimlarge.mi2 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/large.mi3/large.mi3.Rdata")
+apimlarge.mi3 <- mi.res
+rm(mi.res)
+```
+
+## Emo Reg
+
+```{r}
+# Small
+load("0_data/processed_emoreg/small.mi1/small.mi1.Rdata")
+emoregsmall.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_emoreg/small.mi2/small.mi2.Rdata")
+emoregsmall.mi2 <- mi.res
+rm(mi.res)
+
+# Medium
+load("0_data/processed_emoreg/medium.mi1/medium.mi1.Rdata")
+emoregmedium.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_emoreg/medium.mi2/medium.mi2.Rdata")
+emoregmedium.mi2 <- mi.res
+rm(mi.res)
+
+# Large
+load("0_data/processed_emoreg/large.mi1/large.mi1.Rdata")
+emoreglarge.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_emoreg/large.mi2/large.mi2.Rdata")
+emoreglarge.mi2 <- mi.res
+rm(mi.res)
+```
+
+# Raw data statistics
+
+## Demographic data
+
+Too lazy to make a table, I'll just write about in the manuscript.
+
+```{r}
+a <- mean(original_apim$MothersAge_Mother_Baseline, na.rm = TRUE)
+b <- mean(original_apim$FathersAge_Father_Baseline, na.rm = TRUE)
+c <- a + b
+c/2
+
+a <- sd(original_apim$MothersAge_Mother_Baseline, na.rm = TRUE)
+b <- sd(original_apim$FathersAge_Father_Baseline, na.rm = TRUE)
+c <- a + b
+c/2
+
+table(original_apim$MotherRace_Mother_Baseline)
+table(original_apim$FatherRace_Father_Baseline)
+
+table(original_apim$MothersPoverty_Mother_Baseline)
+table(original_apim$FathersPoverty_Father_Baseline)
+
+table(original_apim$MothersEdu_Mother_Baseline)
+table(original_apim$FathersEdu_Father_Baseline)
+
+rm(a, b, c, df2)
+```
+
+# Descriptive Statistics
+
+## APIM
+
+```{r}
+myvars <- c("Coparent_Total_Mother", 
+            "Coparent_Total_Father", 
+            "Depression_Total_Mother", 
+            "Depression_Total_Father")
+
+sect_properties <- prop_section(page_size = page_size(orient = "landscape"))
+
+## Matrix 1
+mice_df(apimsmall.mi1, vs = myvars) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi1destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(apimmedium.mi1, vs = myvars) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi1destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(apimlarge.mi1, vs = myvars) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi1destat.docx", 
+               pr_section = sect_properties)
+
+## Matrix 2
+mice_df(apimsmall.mi2, vs = myvars) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi2destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(apimmedium.mi2, vs = myvars) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi2destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(apimlarge.mi2, vs = myvars) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi2destat.docx", 
+               pr_section = sect_properties)
+
+## Matrix 3
+mice_df(apimsmall.mi3, vs = myvars) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi3destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(apimmedium.mi3, vs = myvars) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi3destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(apimlarge.mi3, vs = myvars) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi3destat.docx", 
+               pr_section = sect_properties)
+```
+
+```{r}
+## Non-imputed
+small_apim %>%
+  select(all_of(myvars)) %>%
+  psych::describe(na.rm = FALSE) %>%
+  as.data.frame() %>%
+  select(mean, sd, min, max, se, n) %>%
+  mutate(missing = n - length(small_apim)) %>%
+  select(-n) %>%
+  rownames_to_column(var = "Variable") %>%
+  rename(Mean = mean) %>% rename(`Standard Deviation` = sd) %>%
+  rename(Minimum = min) %>% rename(Maximum = max) %>%
+  rename(`Standard Error` = se) %>%
+  rename(`# of Missing Values` = missing) %>%
+  rrtable::df2flextable() %>% apa_theme() %>% 
+  bg(bg = "white", part = "header") %>%
+  save_as_docx(path = "2_output/apim/nonimputed_output/smallapimrawdestat.docx", 
+               pr_section = sect_properties)
+
+medium_apim %>%
+  select(all_of(myvars)) %>%
+  psych::describe(na.rm = FALSE) %>%
+  as.data.frame() %>%
+  select(mean, sd, min, max, se, n) %>%
+  mutate(missing = n - length(medium_apim)) %>%
+  select(-n) %>%
+  rownames_to_column(var = "Variable") %>%
+  rename(Mean = mean) %>% rename(`Standard Deviation` = sd) %>%
+  rename(Minimum = min) %>% rename(Maximum = max) %>%
+  rename(`Standard Error` = se) %>%
+  rename(`# of Missing Values` = missing) %>%
+  rrtable::df2flextable() %>% apa_theme() %>% 
+  bg(bg = "white", part = "header") %>%
+  save_as_docx(path = "2_output/apim/nonimputed_output/mediumapimrawdestat.docx", 
+               pr_section = sect_properties)
+  
+large_apim %>%
+  select(all_of(myvars)) %>%
+  psych::describe(na.rm = FALSE) %>%
+  as.data.frame() %>%
+  select(mean, sd, min, max, se, n) %>%
+  mutate(missing = n - length(large_apim)) %>%
+  select(-n) %>%
+  rownames_to_column(var = "Variable") %>%
+  rename(Mean = mean) %>% rename(`Standard Deviation` = sd) %>%
+  rename(Minimum = min) %>% rename(Maximum = max) %>%
+  rename(`Standard Error` = se) %>%
+  rename(`# of Missing Values` = missing) %>%
+  rrtable::df2flextable() %>% apa_theme() %>% 
+  bg(bg = "white", part = "header") %>%
+  save_as_docx(path = "2_output/apim/nonimputed_output/largeapimrawdestat.docx", 
+               pr_section = sect_properties)
+
+original_apim %>%
+  select(all_of(myvars)) %>%
+  psych::describe(na.rm = FALSE) %>%
+  as.data.frame() %>%
+  select(mean, sd, min, max, se, n) %>%
+  mutate(missing = n - length(original_apim)) %>%
+  select(-n) %>%
+  rownames_to_column(var = "Variable") %>%
+  rename(Mean = mean) %>% rename(`Standard Deviation` = sd) %>%
+  rename(Minimum = min) %>% rename(Maximum = max) %>%
+  rename(`Standard Error` = se) %>%
+  rename(`# of Missing Values` = missing) %>%
+  rrtable::df2flextable() %>% apa_theme() %>% 
+  bg(bg = "white", part = "header") %>%
+  save_as_docx(path = "2_output/apim/nonimputed_output/originalapimrawdestat.docx", 
+               pr_section = sect_properties)
+```
+
+## Emo Reg
+
+```{r}
+myvars <- c("Coparent_Total_Mother", 
+            "Coparent_Total_Father",
+            "CBCL_EmoDysreg_Total")
+
+sect_properties <- prop_section(page_size = page_size(orient = "landscape"))
+
+## Matrix 1
+mice_df(emoregsmall.mi1, vs = myvars) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/smallmi1destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(emoregmedium.mi1, vs = myvars) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/mediummi1destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(emoreglarge.mi1, vs = myvars) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/largemi1destat.docx", 
+               pr_section = sect_properties)
+
+## Matrix 2
+mice_df(emoregsmall.mi2, vs = myvars) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/smallmi2destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(emoregmedium.mi2, vs = myvars) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/mediummi2destat.docx", 
+               pr_section = sect_properties)
+
+mice_df(emoreglarge.mi2, vs = myvars) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/largemi2destat.docx", 
+               pr_section = sect_properties)
+```
+
+```{r}
+## Non-imputed
+small_emoreg %>%
+  select(all_of(myvars)) %>%
+  psych::describe(na.rm = FALSE) %>%
+  as.data.frame() %>%
+  select(mean, sd, min, max, se, n) %>%
+  mutate(missing = n - length(small_emoreg)) %>%
+  select(-n) %>%
+  rownames_to_column(var = "Variable") %>%
+  rename(Mean = mean) %>% rename(`Standard Deviation` = sd) %>%
+  rename(Minimum = min) %>% rename(Maximum = max) %>%
+  rename(`Standard Error` = se) %>%
+  rename(`# of Missing Values` = missing) %>%
+  rrtable::df2flextable() %>% apa_theme() %>% 
+  bg(bg = "white", part = "header") %>%
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/smallemoregrawdestat.docx", 
+               pr_section = sect_properties)
+
+medium_emoreg %>%
+  select(all_of(myvars)) %>%
+  psych::describe(na.rm = FALSE) %>%
+  as.data.frame() %>%
+  select(mean, sd, min, max, se, n) %>%
+  mutate(missing = n - length(medium_emoreg)) %>%
+  select(-n) %>%
+  rownames_to_column(var = "Variable") %>%
+  rename(Mean = mean) %>% rename(`Standard Deviation` = sd) %>%
+  rename(Minimum = min) %>% rename(Maximum = max) %>%
+  rename(`Standard Error` = se) %>%
+  rename(`# of Missing Values` = missing) %>%
+  rrtable::df2flextable() %>% apa_theme() %>% 
+  bg(bg = "white", part = "header") %>%
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/mediumemoregrawdestat.docx", 
+               pr_section = sect_properties)
+  
+large_emoreg %>%
+  select(all_of(myvars)) %>%
+  psych::describe(na.rm = FALSE) %>%
+  as.data.frame() %>%
+  select(mean, sd, min, max, se, n) %>%
+  mutate(missing = n - length(large_emoreg)) %>%
+  select(-n) %>%
+  rownames_to_column(var = "Variable") %>%
+  rename(Mean = mean) %>% rename(`Standard Deviation` = sd) %>%
+  rename(Minimum = min) %>% rename(Maximum = max) %>%
+  rename(`Standard Error` = se) %>%
+  rename(`# of Missing Values` = missing) %>%
+  rrtable::df2flextable() %>% apa_theme() %>% 
+  bg(bg = "white", part = "header") %>%
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/largeemoregrawdestat.docx", 
+               pr_section = sect_properties)
+
+original_emoreg %>%
+  select(all_of(myvars)) %>%
+  psych::describe(na.rm = FALSE) %>%
+  as.data.frame() %>%
+  select(mean, sd, min, max, se, n) %>%
+  mutate(missing = n - length(original_emoreg)) %>%
+  select(-n) %>%
+  rownames_to_column(var = "Variable") %>%
+  rename(Mean = mean) %>% rename(`Standard Deviation` = sd) %>%
+  rename(Minimum = min) %>% rename(Maximum = max) %>%
+  rename(`Standard Error` = se) %>%
+  rename(`# of Missing Values` = missing) %>%
+  rrtable::df2flextable() %>% apa_theme() %>% 
+  bg(bg = "white", part = "header") %>%
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/originalemoregrawdestat.docx", 
+               pr_section = sect_properties)
+```
+
+# Cronbach's alpha 
+
+```{r}
+## Depression
+depression_mom <- small_apim %>%
+  select(contains("Depression") & contains("Mother") & contains("item")) %>%
+  names()
+
+depression_dad <- small_apim %>%
+  select(contains("Depression") & contains("Father") & contains("item")) %>%
+  names()
+
+## Coparent
+coparent_mom <- small_apim %>%
+  select(contains("Coparent") & contains("Mother") & contains("item")) %>%
+  names()
+
+coparent_dad <- small_apim %>%
+  select(contains("Coparent") & contains("Father") & contains("item")) %>%
+  names()
+
+## CBCL
+cbcl_kid <- small_emoreg %>%
+  select(contains("CBCL") & !contains("Total")) %>%
+  names()
+
+sect_properties <- prop_section(page_size = page_size(orient = "landscape"))
+```
+
+## APIM
+
+### Depression Mother
+
+```{r}
+# Matrix 1
+mice_alpha(imp = apimsmall.mi1,
+           varlist = depression_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi1alpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi1,
+           varlist = depression_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi1alpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi1,
+           varlist = depression_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi1alpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+# Matrix 2
+mice_alpha(imp = apimsmall.mi2,
+           varlist = depression_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi2alpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi2,
+           varlist = depression_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi2alpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi2,
+           varlist = depression_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi2alpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+# Matrix 3
+mice_alpha(imp = apimsmall.mi3,
+           varlist = depression_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi3alpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi3,
+           varlist = depression_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi3alpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi3,
+           varlist = depression_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi3alpha_depressionmom.docx", 
+               pr_section = sect_properties)
+```
+
+```{r}
+delete <- small_apim %>%
+  select(all_of(depression_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/smallapimalpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+delete <- medium_apim %>%
+  select(all_of(depression_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/mediumapimalpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+delete <- large_apim %>%
+  select(all_of(depression_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/largeapimalpha_depressionmom.docx", 
+               pr_section = sect_properties)
+
+delete <- original_apim %>%
+  select(all_of(depression_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/originalapimalpha_depressionmom.docx", 
+               pr_section = sect_properties)
+```
+
+### Depression Father
+
+```{r}
+# Matrix 1
+mice_alpha(imp = apimsmall.mi1,
+           varlist = depression_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi1alpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi1,
+           varlist = depression_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi1alpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi1,
+           varlist = depression_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi1alpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+# Matrix 2
+mice_alpha(imp = apimsmall.mi2,
+           varlist = depression_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi2alpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi2,
+           varlist = depression_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi2alpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi2,
+           varlist = depression_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi2alpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+# Matrix 3
+mice_alpha(imp = apimsmall.mi3,
+           varlist = depression_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi3alpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi3,
+           varlist = depression_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi3alpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi3,
+           varlist = depression_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi3alpha_depressiondad.docx", 
+               pr_section = sect_properties)
+```
+
+```{r}
+delete <- small_apim %>%
+  select(all_of(depression_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/smallapimalpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+delete <- medium_apim %>%
+  select(all_of(depression_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/mediumapimalpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+delete <- large_apim %>%
+  select(all_of(depression_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/largeapimalpha_depressiondad.docx", 
+               pr_section = sect_properties)
+
+delete <- original_apim %>%
+  select(all_of(depression_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/originalapimalpha_depressiondad.docx", 
+               pr_section = sect_properties)
+```
+
+### Coparent Mother
+
+```{r}
+# Matrix 1
+mice_alpha(imp = apimsmall.mi1,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi1alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi1,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi1alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi1,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi1alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+# Matrix 2
+mice_alpha(imp = apimsmall.mi2,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi2alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi2,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi2alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi2,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi2alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+# Matrix 3
+mice_alpha(imp = apimsmall.mi3,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi3alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi3,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi3alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi3,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi3alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+```
+
+```{r}
+delete <- small_apim %>%
+  select(all_of(coparent_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/smallapimalpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+delete <- medium_apim %>%
+  select(all_of(coparent_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/mediumapimalpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+delete <- large_apim %>%
+  select(all_of(coparent_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/largeapimalpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+delete <- original_apim %>%
+  select(all_of(coparent_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/originalapimalpha_coparentmom.docx", 
+               pr_section = sect_properties)
+```
+
+## Coparent Father
+
+```{r}
+mice_alpha(imp = apimsmall.mi1,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi1alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi1,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi1alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi1,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi1alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+# Matrix 2
+mice_alpha(imp = apimsmall.mi2,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi2alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi2,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi2alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi2,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi2alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+# Matrix 3
+mice_alpha(imp = apimsmall.mi3,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/smallmi3alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimmedium.mi3,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/mediummi3alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = apimlarge.mi3,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/apim/imputed_output/largemi3alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+```
+
+```{r}
+delete <- small_apim %>%
+  select(all_of(coparent_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/smallapimalpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+delete <- medium_apim %>%
+  select(all_of(coparent_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/mediumapimalpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+delete <- large_apim %>%
+  select(all_of(coparent_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/largeapimalpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+delete <- original_apim %>%
+  select(all_of(coparent_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/apim/nonimputed_output/originalapimalpha_coparentdad.docx", 
+               pr_section = sect_properties)
+```
+
+## Emo Reg
+
+### Coparent Mom
+
+```{r}
+# Matrix 1
+mice_alpha(imp = emoregsmall.mi1,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/smallmi1alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoregmedium.mi1,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/mediummi1alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoreglarge.mi1,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/largemi1alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+# Matrix 2
+mice_alpha(imp = emoregsmall.mi2,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/smallmi2alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoregmedium.mi2,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/mediummi2alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoreglarge.mi2,
+           varlist = coparent_mom,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/largemi2alpha_coparentmom.docx", 
+               pr_section = sect_properties)
+```
+
+```{r}
+delete <- small_emoreg %>%
+  select(all_of(coparent_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/smallemoregalpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+delete <- medium_emoreg %>%
+  select(all_of(coparent_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/mediumemoregalpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+delete <- large_emoreg %>%
+  select(all_of(coparent_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/largeemoregalpha_coparentmom.docx", 
+               pr_section = sect_properties)
+
+delete <- original_emoreg %>%
+  select(all_of(coparent_mom)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/originalemoregalpha_coparentmom.docx", 
+               pr_section = sect_properties)
+```
+
+## Coparent Father
+
+```{r}
+mice_alpha(imp = emoregsmall.mi1,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/smallmi1alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoregmedium.mi1,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/mediummi1alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoreglarge.mi1,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/largemi1alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+# Matrix 2
+mice_alpha(imp = emoregsmall.mi2,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/smallmi2alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoregmedium.mi2,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/mediummi2alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoreglarge.mi2,
+           varlist = coparent_dad,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/largemi2alpha_coparentdad.docx", 
+               pr_section = sect_properties)
+```
+
+```{r}
+delete <- small_emoreg %>%
+  select(all_of(coparent_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/smallemoregalpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+delete <- medium_emoreg %>%
+  select(all_of(coparent_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/mediumemoregalpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+delete <- large_emoreg %>%
+  select(all_of(coparent_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/largeemoregalpha_coparentdad.docx", 
+               pr_section = sect_properties)
+
+delete <- original_emoreg %>%
+  select(all_of(coparent_dad)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/originalemoregalpha_coparentdad.docx", 
+               pr_section = sect_properties)
+```
+
+### CBCL
+
+```{r}
+mice_alpha(imp = emoregsmall.mi1,
+           varlist = cbcl_kid,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/smallmi1alpha_cbclkid.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoregmedium.mi1,
+           varlist = cbcl_kid,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/mediummi1alpha_cbclkid.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoreglarge.mi1,
+           varlist = cbcl_kid,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/largemi1alpha_cbclkid.docx", 
+               pr_section = sect_properties)
+
+# Matrix 2
+mice_alpha(imp = emoregsmall.mi2,
+           varlist = cbcl_kid,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/smallmi2alpha_cbclkid.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoregmedium.mi2,
+           varlist = cbcl_kid,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/mediummi2alpha_cbclkid.docx", 
+               pr_section = sect_properties)
+
+mice_alpha(imp = emoreglarge.mi2,
+           varlist = cbcl_kid,
+           bnum = 1e4) %>% 
+  save_as_docx(path = "2_output/emoreg/imputed_output/largemi2alpha_cbclkid.docx", 
+               pr_section = sect_properties)
+```
+
+```{r}
+delete <- small_emoreg %>%
+  select(all_of(cbcl_kid)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/smallemoregalpha_cbclkid.docx", 
+               pr_section = sect_properties)
+
+delete <- medium_emoreg %>%
+  select(all_of(cbcl_kid)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/mediumemoregalpha_cbclkid.docx", 
+               pr_section = sect_properties)
+
+delete <- large_emoreg %>%
+  select(all_of(cbcl_kid)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/largeemoregalpha_cbclkid.docx", 
+               pr_section = sect_properties)
+
+delete <- original_emoreg %>%
+  select(all_of(cbcl_kid)) %>%
+  psych::alpha(impute = "mean")
+delete$total %>% as.data.frame() %>% df2flextable() %>% 
+  save_as_docx(path = "2_output/emoreg/nonimputed_output/originalemoregalpha_cbclkid.docx", 
+               pr_section = sect_properties)
+```
+
+# Missingness
+
+```{r}
+# plot_pattern(original_apim)
+```
+
+# Predictor Matrices
+
+## APIM
+
+```{r}
+apim_pred1 <- plot_pred(
+  apimsmall.mi1$predictorMatrix, 
+  label = TRUE, 
+  rotate = FALSE,
+  square = FALSE) + scale_fill_manual(values = c("white", "red")) +
+  theme(axis.text.x.top = element_blank(),
+        axis.ticks.x.top = element_blank())
+ggsave(plot = apim_pred1, filename = "2_output/apim/imputed_output/apimpred_matrix1.tiff",
+        height = 6, width = 8, units = "in")
+
+apim_pred2 <- plot_pred(
+  apimsmall.mi2$predictorMatrix, 
+  label = TRUE, 
+  rotate = TRUE,
+  square = FALSE) + scale_fill_manual(values = c("white", "red")) +
+  theme(axis.text.x.top = element_blank(),
+        axis.ticks.x.top = element_blank())
+ggsave(plot = apim_pred2, filename = "2_output/apim/imputed_output/apimpred_matrix2.tiff",
+        height = 6, width = 8, units = "in")
+
+apim_pred3 <- plot_pred(
+  apimsmall.mi3$predictorMatrix, 
+  label = TRUE, 
+  rotate = TRUE,
+  square = FALSE) + scale_fill_manual(values = c("white", "red")) +
+  theme(axis.text.x.top = element_blank(),
+        axis.ticks.x.top = element_blank())
+ggsave(plot = apim_pred3, filename = "2_output/apim/imputed_output/apimpred_matrix3.tiff",
+        height = 6, width = 8, units = "in")
+```
+
+## Emo Reg
+
+```{r}
+emoreg_pred1 <- plot_pred(
+  emoregsmall.mi1$predictorMatrix, 
+  label = TRUE, 
+  rotate = TRUE,
+  square = FALSE) + scale_fill_manual(values = c("white", "red")) +
+  theme(axis.text.x.top = element_blank(),
+        axis.ticks.x.top = element_blank())
+ggsave(plot = emoreg_pred1, filename = "2_output/emoreg/imputed_output/emoregpred_matrix1.tiff",
+        height = 8, width = 10, units = "in")
+
+emoreg_pred2 <- plot_pred(
+  emoregsmall.mi2$predictorMatrix, 
+  label = TRUE, 
+  rotate = TRUE,
+  square = FALSE) + scale_fill_manual(values = c("white", "red")) +
+  theme(axis.text.x.top = element_blank(),
+        axis.ticks.x.top = element_blank())
+ggsave(plot = emoreg_pred2, filename = "2_output/emoreg/imputed_output/emoregpred_matrix2.tiff",
+        height = 8, width = 10, units = "in")
+```
+
+# Missingness
+
+## APIM
+
+```{r}
+options(width = 100)
+apimsmall.mi1$loggedEvents %>%
+  write.table(file = "2_output/apim/imputed_output/apimsmallmi1_loggedEvents.txt")
+
+options(width = 100)
+apimmedium.mi1$loggedEvents %>%
+  write.table(file = "2_output/apim/imputed_output/apimmediummi1_loggedEvents.txt")
+
+options(width = 100)
+apimlarge.mi1$loggedEvents %>%
+  write.table(file = "2_output/apim/imputed_output/apimlargemi1_loggedEvents.txt")
+
+# Matrix 2
+options(width = 100)
+apimsmall.mi2$loggedEvents %>%
+  write.table(file = "2_output/apim/imputed_output/apimsmallmi2_loggedEvents.txt")
+
+options(width = 100)
+apimmedium.mi2$loggedEvents %>%
+  write.table(file = "2_output/apim/imputed_output/apimmediummi2_loggedEvents.txt")
+
+options(width = 100)
+apimlarge.mi2$loggedEvents %>%
+  write.table(file = "2_output/apim/imputed_output/apimlargemi2_loggedEvents.txt")
+
+# Matrix 3
+options(width = 100)
+apimsmall.mi3$loggedEvents %>%
+  write.table(file = "2_output/apim/imputed_output/apimsmallmi3_loggedEvents.txt")
+
+options(width = 100)
+apimmedium.mi3$loggedEvents %>%
+  write.table(file = "2_output/apim/imputed_output/apimmediummi3_loggedEvents.txt")
+
+options(width = 100)
+apimlarge.mi3$loggedEvents %>%
+  write.table(file = "2_output/apim/imputed_output/apimlargemi3_loggedEvents.txt")
+```
+
+## Emo Reg
+
+```{r}
+# Matrix 1
+options(width = 100)
+emoregsmall.mi1$loggedEvents %>%
+  write.table(file = "2_output/emoreg/imputed_output/emoregsmallmi1_loggedEvents.txt")
+
+options(width = 100)
+emoregmedium.mi1$loggedEvents %>%
+  write.table(file = "2_output/emoreg/imputed_output/emoregmediummi1_loggedEvents.txt")
+
+options(width = 100)
+emoreglarge.mi1$loggedEvents %>%
+  write.table(file = "2_output/emoreg/imputed_output/emoreglargemi1_loggedEvents.txt")
+
+# Matrix 2
+options(width = 100)
+emoregsmall.mi2$loggedEvents %>%
+  write.table(file = "2_output/emoreg/imputed_output/emoregsmallmi2_loggedEvents.txt")
+
+options(width = 100)
+emoregmedium.mi2$loggedEvents %>%
+  write.table(file = "2_output/emoreg/imputed_output/emoregmediummi2_loggedEvents.txt")
+
+options(width = 100)
+emoreglarge.mi2$loggedEvents %>%
+  write.table(file = "2_output/emoreg/imputed_output/emoreglargemi2_loggedEvents.txt")
+```

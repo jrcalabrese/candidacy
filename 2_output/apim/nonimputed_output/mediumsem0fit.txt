@@ -1,0 +1,24 @@
+                 npar                  fmin                 chisq                    df 
+               14.000                 0.000                 0.000                 0.000 
+               pvalue        baseline.chisq           baseline.df       baseline.pvalue 
+                   NA                90.529                 6.000                 0.000 
+                  cfi                   tli                  nnfi                   rfi 
+                1.000                 1.000                 1.000                 1.000 
+                  nfi                  pnfi                   ifi                   rni 
+                1.000                 0.000                 1.000                 1.000 
+                 logl     unrestricted.logl                   aic                   bic 
+             -527.517              -527.517              1083.034              1134.267 
+               ntotal                  bic2                 rmsea        rmsea.ci.lower 
+              287.000              1089.872                 0.000                 0.000 
+       rmsea.ci.upper        rmsea.ci.level          rmsea.pvalue        rmsea.close.h0 
+                0.000                 0.900                    NA                 0.050 
+rmsea.notclose.pvalue     rmsea.notclose.h0                   rmr            rmr_nomean 
+                   NA                 0.080                 0.000                 0.000 
+                 srmr          srmr_bentler   srmr_bentler_nomean                  crmr 
+                0.000                 0.000                 0.000                 0.000 
+          crmr_nomean            srmr_mplus     srmr_mplus_nomean                 cn_05 
+                0.000                 0.000                 0.000                 1.000 
+                cn_01                   gfi                  agfi                  pgfi 
+                1.000                 1.000                 1.000                 0.000 
+                  mfi                  ecvi 
+                1.000                 0.098 

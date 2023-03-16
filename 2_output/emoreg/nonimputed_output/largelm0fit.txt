@@ -1,0 +1,22 @@
+
+Call:
+lm(formula = CBCL_EmoDysreg_Total ~ Coparent_Total_Mother + Coparent_Total_Father, 
+    data = large)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.45337 -0.16813 -0.03706  0.12492  1.68103 
+
+Coefficients:
+                      Estimate Std. Error t value             Pr(>|t|)    
+(Intercept)            0.69909    0.05205  13.431 < 0.0000000000000002 ***
+Coparent_Total_Mother -0.06664    0.01132  -5.888        0.00000000513 ***
+Coparent_Total_Father -0.02839    0.01429  -1.987               0.0471 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2333 on 1152 degrees of freedom
+  (845 observations deleted due to missingness)
+Multiple R-squared:  0.04764,	Adjusted R-squared:  0.04599 
+F-statistic: 28.81 on 2 and 1152 DF,  p-value: 0.0000000000006153
+

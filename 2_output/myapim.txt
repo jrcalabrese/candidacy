@@ -1,0 +1,30 @@
+
+                        Coparent_Total_Mother  ~ a1*Depression_Total_Mother
+                        Coparent_Total_Father  ~ a2*Depression_Total_Father
+                        Coparent_Total_Mother  ~ p12*Depression_Total_Father
+                        Coparent_Total_Father  ~ p21*Depression_Total_Mother
+                        Depression_Total_Mother ~ mx1*1
+                        Depression_Total_Father ~ mx2*1
+                        Coparent_Total_Mother ~ my1*1
+                        Coparent_Total_Father ~ my2*1
+                        Depression_Total_Mother ~~ vx1*Depression_Total_Mother
+                        Depression_Total_Father ~~ vx2*Depression_Total_Father
+                        Coparent_Total_Mother ~~ vy1*Coparent_Total_Mother
+                        Coparent_Total_Father ~~ vy2*Coparent_Total_Father
+                        Depression_Total_Father ~~ cx*Depression_Total_Mother
+                        Coparent_Total_Father ~~ cy*Coparent_Total_Mother 
+  
+                        a_diff := a1 - a2
+                        p_diff := p12 - p21
+                        k1 := p12/a1
+                        k2 := p21/a2
+                        k_diff := k1 - k2
+                        i_diff := my1 - my2
+                        a_ave := (a1 + a2)/2
+                        p_ave := (p12 + p21)/2
+                        i_ave := (my1 +my2)/2
+                        sum1 := (p12 + a1)/2
+                        sum2 := (p21 + a2)/2
+                        cont1 := a1 - p12
+                        cont2 := a2 - p21
+                        

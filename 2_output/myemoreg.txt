@@ -1,0 +1,1 @@
+CBCL_EmoDysreg_Total ~ Coparent_Total_Mother + Coparent_Total_Father

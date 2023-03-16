@@ -1,0 +1,114 @@
+lavaan 0.6.14 ended normally after 39 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        14
+
+                                                  Used       Total
+  Number of observations                          1985        2000
+  Number of missing patterns                        14            
+
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Model Test Baseline Model:
+
+  Test statistic                               347.553
+  Degrees of freedom                                 6
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    1.000
+  Tucker-Lewis Index (TLI)                       1.000
+                                                      
+  Robust Comparative Fit Index (CFI)             1.000
+  Robust Tucker-Lewis Index (TLI)                1.000
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -3329.345
+  Loglikelihood unrestricted model (H1)      -3329.345
+                                                      
+  Akaike (AIC)                                6686.690
+  Bayesian (BIC)                              6764.997
+  Sample-size adjusted Bayesian (SABIC)       6720.518
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.000
+  90 Percent confidence interval - lower         0.000
+  90 Percent confidence interval - upper         0.000
+  P-value H_0: RMSEA <= 0.050                       NA
+  P-value H_0: RMSEA >= 0.080                       NA
+                                                      
+  Robust RMSEA                                   0.000
+  90 Percent confidence interval - lower         0.000
+  90 Percent confidence interval - upper         0.000
+  P-value H_0: Robust RMSEA <= 0.050                NA
+  P-value H_0: Robust RMSEA >= 0.080                NA
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.000
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Observed
+  Observed information based on                Hessian
+
+Regressions:
+                          Estimate  Std.Err  z-value  P(>|z|)
+  Coparent_Total_Mother ~                                    
+    Dprs_T_M  (a1)          -0.329    0.066   -5.019    0.000
+  Coparent_Total_Father ~                                    
+    Dprs_T_F  (a2)          -0.544    0.066   -8.223    0.000
+  Coparent_Total_Mother ~                                    
+    Dprs_T_F (p12)          -0.457    0.097   -4.702    0.000
+  Coparent_Total_Father ~                                    
+    Dprs_T_M (p21)          -0.178    0.057   -3.117    0.002
+
+Covariances:
+                             Estimate  Std.Err  z-value  P(>|z|)
+  Depression_Total_Mother ~~                                    
+    Dprss_T_F (cx)              0.006    0.002    2.621    0.009
+ .Coparent_Total_Mother ~~                                      
+   .Cprnt_T_F (cy)              0.200    0.014   13.924    0.000
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(>|z|)
+    Dprs_T_M (mx1)    0.127    0.007   18.257    0.000
+    Dprs_T_F (mx2)    0.086    0.007   12.913    0.000
+   .Cprn_T_M (my1)    3.495    0.021  163.742    0.000
+   .Cprn_T_F (my2)    3.685    0.017  211.495    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(>|z|)
+    Dprs_T_M (vx1)    0.087    0.003   30.012    0.000
+    Dprs_T_F (vx2)    0.061    0.002   26.246    0.000
+   .Cprn_T_M (vy1)    0.547    0.020   27.371    0.000
+   .Cprn_T_F (vy2)    0.341    0.013   25.983    0.000
+
+Defined Parameters:
+                   Estimate  Std.Err  z-value  P(>|z|)
+    a_diff            0.215    0.095    2.254    0.024
+    p_diff           -0.279    0.115   -2.431    0.015
+    k1                1.390    0.425    3.270    0.001
+    k2                0.328    0.116    2.827    0.005
+    k_diff            1.062    0.483    2.200    0.028
+    i_diff           -0.190    0.021   -9.014    0.000
+    a_ave            -0.437    0.045   -9.618    0.000
+    p_ave            -0.318    0.055   -5.734    0.000
+    i_ave             3.590    0.016  219.190    0.000
+    sum1             -0.393    0.056   -7.043    0.000
+    sum2             -0.361    0.042   -8.679    0.000
+    cont1             0.128    0.123    1.046    0.296
+    cont2            -0.366    0.091   -3.999    0.000
+
+Modification Indices:
+
+[1] lhs      op       rhs      mi       epc      sepc.lv  sepc.all sepc.nox
+<0 rows> (or 0-length row.names)

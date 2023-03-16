@@ -1,0 +1,14 @@
+              chisq                  df              pvalue                ariv                 fmi 
+              0.000               1.000               1.000               0.000               0.000 
+               npar              ntotal      baseline.chisq         baseline.df     baseline.pvalue 
+             14.000            2000.000             143.782               6.000               0.000 
+                cfi                 rni                nnfi                 tli                 rfi 
+              1.000               1.007               1.044               1.044               1.000 
+                nfi                pnfi                 ifi                 mfi               rmsea 
+              1.000               0.167               1.007               1.000               0.000 
+     rmsea.ci.lower      rmsea.ci.upper        rmsea.pvalue            gammaHat         adjGammaHat 
+              0.000               0.000               1.000               1.000               1.003 
+                rmr          rmr_nomean                srmr        srmr_bentler srmr_bentler_nomean 
+              0.000               0.000               0.000               0.000               0.000 
+               crmr         crmr_nomean          srmr_mplus   srmr_mplus_nomean 
+              0.000               0.000               0.000               0.000 

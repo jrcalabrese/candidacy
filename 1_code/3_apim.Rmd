@@ -1,0 +1,765 @@
+---
+title: "Candidacy project: Load in APIM data, do APIM"
+author: "Julianna Calabrese"
+date: "January 4th, 2023"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Prepwork
+
+```{r}
+set.seed(1227)
+setwd("/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis")
+```
+
+```{r}
+#install.packages("Rtools")
+#install.packages(c('devtools', 'curl'))
+#library('devtools')
+#devtools::install_github("simsem/semTools/semTools")
+#install.packages("lavaan", repos = "http://www.da.ugent.be", type = "source")
+```
+
+```{r}
+library(semTools)
+library(lavaan)
+library(tidyverse)
+library(simsem)
+library(mice)
+library(miceadds)
+library(semPlot)
+library(lavaanPlot)
+
+options(scipen = 99999) # avoids scientific notation
+```
+
+# Load the myapim object
+
+```{r}
+myapim <- read_file("2_output/myapim.txt")
+```
+
+# Load all six mids objects
+
+```{r}
+# Small
+load("0_data/processed_apim/small.mi1/small.mi1.Rdata")
+small.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/small.mi2/small.mi2.Rdata")
+small.mi2 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/small.mi3/small.mi3.Rdata")
+small.mi3 <- mi.res
+rm(mi.res)
+
+# Medium
+load("0_data/processed_apim/medium.mi1/medium.mi1.Rdata")
+medium.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/medium.mi2/medium.mi2.Rdata")
+medium.mi2 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/medium.mi3/medium.mi3.Rdata")
+medium.mi3 <- mi.res
+rm(mi.res)
+
+# Large
+load("0_data/processed_apim/large.mi1/large.mi1.Rdata")
+large.mi1 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/large.mi2/large.mi2.Rdata")
+large.mi2 <- mi.res
+rm(mi.res)
+
+load("0_data/processed_apim/large.mi3/large.mi3.Rdata")
+large.mi3 <- mi.res
+rm(mi.res)
+```
+
+# Load non-imputed data
+
+```{r}
+small <- read.csv("0_data/processed_apim/small.csv")
+medium <- read.csv("0_data/processed_apim/medium.csv")
+large <- read.csv("0_data/processed_apim/large.csv")
+```
+
+# Conduct SEM on multiply imputed data
+
+```{r}
+## Matrix 1
+small.sem1 <- sem.mi(
+  model = myapim,
+  data = small.mi1,
+  miPackage = "mice",
+  seed = 1227
+)
+
+medium.sem1 <- sem.mi(
+  model = myapim,
+  data = medium.mi1,
+  miPackage = "mice",
+  seed = 1227
+)
+
+large.sem1 <- runMI(
+  model = myapim,
+  data = large.mi1,
+  miPackage = "mice",
+  seed = 1227
+)
+
+## Matrix 2
+small.sem2 <- sem.mi(
+  model = myapim,
+  data = small.mi2,
+  miPackage = "mice",
+  seed = 1227
+)
+
+medium.sem2 <- sem.mi(
+  model = myapim,
+  data = medium.mi2,
+  miPackage = "mice",
+  seed = 1227
+)
+
+large.sem2 <- sem.mi(
+  model = myapim,
+  data = large.mi2,
+  miPackage = "mice",
+  seed = 1227
+)
+
+## Matrix 3
+small.sem3 <- sem.mi(
+  model = myapim,
+  data = small.mi3,
+  miPackage = "mice",
+  seed = 1227
+)
+
+medium.sem3 <- sem.mi(
+  model = myapim,
+  data = medium.mi3,
+  miPackage = "mice",
+  seed = 1227
+)
+
+large.sem3 <- sem.mi(
+  model = myapim,
+  data = large.mi3,
+  miPackage = "mice",
+  seed = 1227
+)
+```
+
+# Conduct SEM on non-imputed data
+
+```{r}
+# Listwise Deletion
+small.sem0 <- sem(
+  model = myapim,
+  data = small,
+  missing = "listwise"
+)
+
+medium.sem0 <- sem(
+  model = myapim,
+  data = medium,
+  missing = "listwise"
+)
+
+large.sem0 <- sem(
+  model = myapim,
+  data = large,
+  missing = "listwise"
+)
+
+# FIML
+small.sem01 <- sem(
+  model = myapim,
+  data = small,
+  missing = "fiml"
+)
+
+medium.sem01 <- sem(
+  model = myapim,
+  data = medium,
+  missing = "fiml"
+)
+
+large.sem01 <- sem(
+  model = myapim,
+  data = large,
+  missing = "fiml"
+)
+```
+
+# Check models
+
+## Imputed models
+
+### Matrix 1
+
+```{r}
+smallsem1fit <- fitMeasures(small.sem1, test = "D2")
+smallsem1sum <- summary(small.sem1, 
+        fit.measures = TRUE, 
+        modindices = TRUE, 
+        pool.robust = TRUE,
+        test = "D2")
+
+options(width = 100)
+capture.output(smallsem1fit, file = "2_output/apim/imputed_output/smallsem1fit.txt")
+capture.output(smallsem1sum, file = "2_output/apim/imputed_output/smallsem1sum.txt")
+```
+
+```{r}
+mediumsem1fit <- fitMeasures(medium.sem1, test = "D2")
+mediumsem1sum <- summary(medium.sem1, 
+        fit.measures = TRUE, 
+        modindices = TRUE, 
+        pool.robust = TRUE,
+        test = "D2")
+
+options(width = 100)
+capture.output(mediumsem1fit, file = "2_output/apim/imputed_output/mediumsem1fit.txt")
+capture.output(mediumsem1sum, file = "2_output/apim/imputed_output/mediumsem1sum.txt")
+```
+
+```{r}
+largesem1fit <- fitMeasures(large.sem1, test = "D2")
+largesem1sum <- summary(large.sem1, 
+        fit.measures = TRUE, 
+        modindices = TRUE, 
+        pool.robust = TRUE,
+        test = "D2")
+
+options(width = 100)
+capture.output(largesem1fit, file = "2_output/apim/imputed_output/largesem1fit.txt")
+capture.output(largesem1sum, file = "2_output/apim/imputed_output/largesem1sum.txt")
+```
+
+### Matrix 2
+
+```{r}
+smallsem2fit <- fitMeasures(small.sem2, test = "D2")
+smallsem2sum <- summary(small.sem2, 
+        fit.measures = TRUE, 
+        modindices = TRUE, 
+        pool.robust = TRUE,
+        test = "D2")
+
+options(width = 100)
+capture.output(smallsem2fit, file = "2_output/apim/imputed_output/smallsem2fit.txt")
+capture.output(smallsem2sum, file = "2_output/apim/imputed_output/smallsem2sum.txt")
+```
+
+```{r}
+mediumsem2fit <- fitMeasures(medium.sem2, test = "D2")
+mediumsem2sum <- summary(medium.sem2, 
+        fit.measures = TRUE, 
+        modindices = TRUE, 
+        pool.robust = TRUE,
+        test = "D2")
+
+options(width = 100)
+capture.output(mediumsem2fit, file = "2_output/apim/imputed_output/mediumsem2fit.txt")
+capture.output(mediumsem2sum, file = "2_output/apim/imputed_output/mediumsem2sum.txt")
+```
+
+```{r}
+largesem2fit <- fitMeasures(large.sem2, test = "D2")
+largesem2sum <- summary(large.sem2, 
+        fit.measures = TRUE, 
+        modindices = TRUE, 
+        pool.robust = TRUE,
+        test = "D2")
+
+options(width = 100)
+capture.output(largesem2fit, file = "2_output/apim/imputed_output/largesem2fit.txt")
+capture.output(largesem2sum, file = "2_output/apim/imputed_output/largesem2sum.txt")
+```
+
+### Matrix 3
+
+```{r}
+smallsem3fit <- fitMeasures(small.sem3, test = "D2")
+smallsem3sum <- summary(small.sem3, 
+        fit.measures = TRUE, 
+        modindices = TRUE, 
+        pool.robust = TRUE,
+        test = "D2")
+
+options(width = 100)
+capture.output(smallsem3fit, file = "2_output/apim/imputed_output/smallsem3fit.txt")
+capture.output(smallsem3sum, file = "2_output/apim/imputed_output/smallsem3sum.txt")
+```
+
+```{r}
+mediumsem3fit <- fitMeasures(medium.sem3, test = "D2")
+mediumsem3sum <- summary(medium.sem3, 
+        fit.measures = TRUE, 
+        modindices = TRUE, 
+        pool.robust = TRUE,
+        test = "D2")
+
+options(width = 100)
+capture.output(mediumsem3fit, file = "2_output/apim/imputed_output/mediumsem3fit.txt")
+capture.output(mediumsem3sum, file = "2_output/apim/imputed_output/mediumsem3sum.txt")
+```
+
+```{r}
+largesem3fit <- fitMeasures(large.sem3, test = "D2")
+largesem3sum <- summary(large.sem3, 
+        fit.measures = TRUE, 
+        modindices = TRUE, 
+        pool.robust = TRUE,
+        test = "D2")
+
+options(width = 100)
+capture.output(largesem3fit, file = "2_output/apim/imputed_output/largesem3fit.txt")
+capture.output(largesem3sum, file = "2_output/apim/imputed_output/largesem3sum.txt")
+```
+
+## Non-imputed models
+
+### Listwise
+
+```{r}
+smallsem0fit <- fitMeasures(small.sem0, test = "D2")
+smallsem0sum <- summary(small.sem0, 
+        fit.measures = TRUE, 
+        modindices = TRUE)
+
+options(width = 100)
+capture.output(smallsem0fit, file = "2_output/apim/nonimputed_output/smallsem0fit.txt")
+capture.output(smallsem0sum, file = "2_output/apim/nonimputed_output/smallsem0sum.txt")
+```
+
+```{r}
+mediumsem0fit <- fitMeasures(medium.sem0, test = "D2")
+mediumsem0sum <- summary(medium.sem0, 
+        fit.measures = TRUE, 
+        modindices = TRUE)
+
+options(width = 100)
+capture.output(mediumsem0fit, file = "2_output/apim/nonimputed_output/mediumsem0fit.txt")
+capture.output(mediumsem0sum, file = "2_output/apim/nonimputed_output/mediumsem0sum.txt")
+```
+
+```{r}
+largesem0fit <- fitMeasures(large.sem0, test = "D2")
+largesem0sum <- summary(large.sem0, 
+        fit.measures = TRUE, 
+        modindices = TRUE)
+
+options(width = 100)
+capture.output(largesem0fit, file = "2_output/apim/nonimputed_output/largesem0fit.txt")
+capture.output(largesem0sum, file = "2_output/apim/nonimputed_output/largesem0sum.txt")
+```
+
+### FIML
+
+```{r}
+smallsem01fit <- fitMeasures(small.sem01, test = "D2")
+smallsem01sum <- summary(small.sem01, 
+        fit.measures = TRUE, 
+        modindices = TRUE)
+
+options(width = 100)
+capture.output(smallsem01fit, file = "2_output/apim/nonimputed_output/smallsem01fit.txt")
+capture.output(smallsem01sum, file = "2_output/apim/nonimputed_output/smallsem01sum.txt")
+```
+
+```{r}
+mediumsem01fit <- fitMeasures(medium.sem01, test = "D2")
+mediumsem01sum <- summary(medium.sem01, 
+        fit.measures = TRUE, 
+        modindices = TRUE)
+
+options(width = 100)
+capture.output(mediumsem01fit, file = "2_output/apim/nonimputed_output/mediumsem01fit.txt")
+capture.output(mediumsem01sum, file = "2_output/apim/nonimputed_output/mediumsem01sum.txt")
+```
+
+```{r}
+largesem01fit <- fitMeasures(large.sem01, test = "D2")
+largesem01sum <- summary(large.sem01, 
+        fit.measures = TRUE, 
+        modindices = TRUE)
+
+options(width = 100)
+capture.output(largesem01fit, file = "2_output/apim/nonimputed_output/largesem01fit.txt")
+capture.output(largesem01sum, file = "2_output/apim/nonimputed_output/largesem01sum.txt")
+```
+
+# Plot models
+
+## Imputed models
+
+### Matrix 1
+
+```{r}
+baseplot <- semPlotModel(small.sem01)
+desired_output <- data.frame(standardizedsolution(small.sem1))
+desired_output <- desired_output %>% filter(op != ":=")
+baseplot@Pars$std <- desired_output$est.std
+semPaths(baseplot, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/imputed_output/smallsem1plot")
+rm(baseplot, desired_output)
+```
+
+```{r}
+baseplot <- semPlotModel(medium.sem0)
+desired_output <- data.frame(standardizedsolution(medium.sem1))
+desired_output <- desired_output %>% filter(op != ":=")
+baseplot@Pars$std <- desired_output$est.std
+semPaths(baseplot, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/imputed_output/mediumsem1plot")
+rm(baseplot, desired_output)
+```
+
+```{r}
+baseplot <- semPlotModel(large.sem0)
+desired_output <- data.frame(standardizedsolution(large.sem1))
+desired_output <- desired_output %>% filter(op != ":=")
+baseplot@Pars$std <- desired_output$est.std
+semPaths(baseplot, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/imputed_output/largesem1plot")
+rm(baseplot, desired_output)
+```
+
+## Matrix 2
+
+```{r}
+baseplot <- semPlotModel(small.sem0)
+desired_output <- data.frame(standardizedsolution(small.sem2))
+desired_output <- desired_output %>% filter(op != ":=")
+baseplot@Pars$std <- desired_output$est.std
+semPaths(baseplot, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/imputed_output/smallsem2plot")
+rm(baseplot, desired_output)
+```
+
+```{r}
+baseplot <- semPlotModel(medium.sem0)
+desired_output <- data.frame(standardizedsolution(medium.sem2))
+desired_output <- desired_output %>% filter(op != ":=")
+baseplot@Pars$std <- desired_output$est.std
+semPaths(baseplot, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/imputed_output/mediumsem2plot")
+rm(baseplot, desired_output)
+```
+
+```{r}
+baseplot <- semPlotModel(large.sem0)
+desired_output <- data.frame(standardizedsolution(large.sem2))
+desired_output <- desired_output %>% filter(op != ":=")
+baseplot@Pars$std <- desired_output$est.std
+semPaths(baseplot, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/imputed_output/largesem2plot")
+rm(baseplot, desired_output)
+```
+
+## Matrix 3
+
+```{r}
+baseplot <- semPlotModel(small.sem0)
+desired_output <- data.frame(standardizedsolution(small.sem3))
+desired_output <- desired_output %>% filter(op != ":=")
+baseplot@Pars$std <- desired_output$est.std
+semPaths(baseplot, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/imputed_output/smallsem3plot")
+rm(baseplot, desired_output)
+```
+
+```{r}
+baseplot <- semPlotModel(medium.sem0)
+desired_output <- data.frame(standardizedsolution(medium.sem3))
+desired_output <- desired_output %>% filter(op != ":=")
+baseplot@Pars$std <- desired_output$est.std
+semPaths(baseplot, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/imputed_output/mediumsem3plot")
+rm(baseplot, desired_output)
+```
+
+```{r}
+baseplot <- semPlotModel(large.sem0)
+desired_output <- data.frame(standardizedsolution(large.sem3))
+desired_output <- desired_output %>% filter(op != ":=")
+baseplot@Pars$std <- desired_output$est.std
+semPaths(baseplot, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/imputed_output/largesem3plot")
+rm(baseplot, desired_output)
+```
+
+## Non-imputed models
+
+### Listwise Deletion
+
+```{r}
+semPaths(small.sem0, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/nonimputed_output/smallsem0plot")
+```
+
+```{r}
+semPaths(medium.sem0, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/nonimputed_output/mediumsem0plot")
+```
+
+```{r}
+semPaths(large.sem0, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/nonimputed_output/largesem0plot")
+```
+
+### FIML
+
+```{r}
+semPaths(small.sem01, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/nonimputed_output/smallsem01plot")
+```
+
+```{r}
+semPaths(medium.sem01, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/nonimputed_output/mediumsem01plot")
+```
+
+```{r}
+semPaths(large.sem01, 
+         nCharNodes = 0, what = "std",
+         fade = TRUE, layout = "tree2", 
+         rotation = 2, style = "ram",
+         intercepts = FALSE, residuals = FALSE, 
+         optimizeLatRes = TRUE, curve = 3.1,  
+         nodeLabels = c("Coparenting Mother", # bottom right
+                        "Coparenting Father", # top right
+                        "Depression Mother", # bottom left
+                        "Depression Father" # top left
+                        ),
+         sizeMan = 25, sizeMan2 = 10, 
+         label.cex = 1.2,
+         edge.label.position = 0.45, edge.label.cex = 1.5,
+         ## change these
+         filetype = "tiff", height = 6, width = 8,
+         filename = "2_output/apim/nonimputed_output/largesem01plot")
+```

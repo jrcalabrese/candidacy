@@ -1,0 +1,920 @@
+---
+title: "Candidacy: Generate data for APIM"
+author: "Julianna Calabrese"
+date: "December 21st, 2022"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Prepwork
+
+```{r}
+set.seed(1227)
+setwd("/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis")
+```
+
+```{r}
+library(tidyverse)
+library(mice)
+library(simsem)
+library(lavaan)
+library(haven)
+library(miceadds)
+library(parameters)
+library(semTools)
+library(readr)
+library(sjPlot)
+options(scipen = 99999)
+```
+
+# List the variables you want
+
+## Good variable names
+
+```{r}
+source("0_data/preprocessed/scale_help.R")
+
+meta <- read.csv("0_data/raw/FFMetadata_v09.csv") %>%
+  mutate(wave = gsub(" ", "", wave, fixed = TRUE)) %>%
+  mutate(respondent = gsub(" ", "", respondent, fixed = TRUE)) %>%
+  filter(!source == "restricted") %>%
+  filter(!grepl("INT CHK", qtext))
+
+# Demographic variables
+demo <- meta %>%
+  filter(new_name %in% dhere) %>%
+  select(new_name, wave, respondent) %>%
+  unite(new_name, c(new_name, respondent, wave), sep = "_", remove = FALSE) %>%
+  select(new_name) %>%
+  as.list()
+  
+# Coparenting
+cop <- meta %>% 
+  filter(new_name %in% cophere) %>%
+  select(new_name, wave, respondent) %>%
+  unite(new_name, c(new_name, respondent, wave), sep = "_", remove = FALSE) %>%
+  select(new_name) %>%
+  as.list()
+
+# Parent Depression
+dep <- meta %>%
+  filter(new_name %in% dephere) %>%
+  select(new_name, wave, respondent) %>%
+  unite(new_name, c(new_name, respondent, wave), sep = "_", remove = FALSE) %>%
+  select(new_name) %>%
+  as.list()
+
+keep_these <- append(demo, cop)
+keep_these <- append(keep_these, dep)
+id <- c("idnum")
+
+keep_these <- append(keep_these, id)
+keep_these <- flatten(keep_these)
+rm(id, cop, dep, demo, dhere, dephere, cophere)
+
+keep_these <- as.character(keep_these)
+```
+
+## Actual variable names
+
+```{r}
+source("0_data/preprocessed/scale_help.R")
+
+meta <- read.csv("0_data/raw/FFMetadata_v09.csv") %>%
+  mutate(wave = gsub(" ", "", wave, fixed = TRUE)) %>%
+  mutate(respondent = gsub(" ", "", respondent, fixed = TRUE)) %>%
+  filter(!source == "restricted") %>%
+  filter(!grepl("INT CHK", qtext))
+
+# Demographic variables
+demo <- meta %>%
+  filter(new_name %in% dhere) %>%
+  select(new_name, wave, respondent) %>%
+  select(new_name) %>%
+  as.list()
+  
+# Coparenting
+cop <- meta %>% 
+  filter(new_name %in% cophere) %>%
+  select(new_name, wave, respondent) %>%
+  select(new_name) %>%
+  as.list()
+
+# Parent Depression
+dep <- meta %>%
+  filter(new_name %in% dephere) %>%
+  select(new_name, wave, respondent) %>%
+  select(new_name) %>%
+  as.list()
+
+keep_these2 <- append(demo, cop)
+keep_these2 <- append(keep_these2, dep)
+id <- c("idnum")
+
+keep_these2 <- append(keep_these2, id)
+keep_these2 <- flatten(keep_these2)
+rm(id, cop, dep, demo, dhere, dephere, cophere)
+
+keep_these2 <- as.character(keep_these2)
+```
+
+```{r}
+ref_df <- data.frame(keep_these, keep_these2)
+rm(meta, keep_these)
+```
+
+# Read and subset data
+
+```{r}
+# Master FFCWS dataset
+raw <- haven::read_sav(file = "0_data/raw/FF_allwaves_2020v2_SPSS.sav", user_na = TRUE) %>%
+  as.data.frame()
+
+df <- raw %>%
+  select(any_of(keep_these2)) %>%
+  mutate(across(everything(), ~ replace(., . < 0, NA))) %>%
+  select(idnum, everything())
+```
+
+# Fix the variables name here
+
+"Fix" is a subjective term here. I still maintain the weird FFCWS variable naming scheme, but at least now the variable names include who completed the questionnaire and what year it was completed. This is important because the variable label does not include this information.
+
+```{r}
+ref_df <- ref_df %>%
+  rename(newnames = keep_these) %>%
+  rename(oldnames = keep_these2)
+
+newnames <- ref_df$newnames 
+oldnames <- ref_df$oldnames 
+
+df <- df %>%
+   rename_with(.fn = ~ newnames,
+               .cols = oldnames)
+
+rm(oldnames, newnames)
+```
+
+# Additional cleaning here
+
+This is where you would rename variables, convert from long to wide, make sum scores, etc. You can also make the dataset smaller by removing variable that you know you won't need.
+
+You will likely want to remove participants that have a certain percentage of missing values since the current dataset has a lot of `NA`s. Also definitely turn all negative numbers into `NA`.
+
+```{r}
+# Remove other years in case they sneak in
+df <- df %>% select(!contains("_Year1")) %>% select(!contains("_Year3")) %>% select(!contains("_Year9"))
+
+# Make all negative values NA
+# Make everything above 99 for the survey data NA
+df <- df %>%
+  mutate(across(where(is.double), as.numeric)) %>%
+  mutate(across(contains("_Baseline"), ~ replace(., . < 0, NA))) %>%
+  mutate(across(contains("_Baseline"), ~ replace(., . > 99, NA))) %>%
+  mutate(across(contains("_Year5"), ~ replace(., . < 0, NA))) %>%
+  mutate(across(contains("_Year5"), ~ replace(., . > 99, NA)))
+```
+
+# How much is missing?
+
+```{r}
+# Overall
+a <- sum(is.na(df))
+b <- sum(is.na(df)) + sum(!is.na(df))
+allmiss <- a/b
+rm(a,b)
+
+# Mother
+x <- df %>% select(starts_with("m"))
+a <- sum(is.na(x))
+b <- sum(is.na(x)) + sum(!is.na(x))
+mothermiss <- a/b
+rm(a,b,x)
+
+# Father
+x <- df %>% select(starts_with("f"))
+a <- sum(is.na(x))
+b <- sum(is.na(x)) + sum(!is.na(x))
+fathermiss <- a/b
+rm(a,b,x)
+
+apimmiss <- data.frame(allmiss, fathermiss, mothermiss) %>% 
+  t() %>% as.data.frame() %>% rownames_to_column() %>%
+  rename(var_type = rowname) %>% rename(amount_missing = V1)
+
+write.csv(apimmiss, "0_data/processed_apim/what_is_missing_apim.csv", row.names = FALSE)
+rm(apimmiss)
+```
+
+```{r}
+rm(list=setdiff(ls(), "df"))
+```
+
+# Remove if everything is missing and save IDs to list
+
+```{r}
+# Goal: remove if all of data is missing for Year 5
+
+# Make dataframe of bad IDs
+who_gets_removed <- df %>% 
+  filter(if_all(contains("_Year5"), is.na)) %>%
+  select(idnum)
+
+# Save bad IDs
+write.table(who_gets_removed, "2_output/remove_me.txt", col.names = FALSE, row.names = FALSE)
+
+# Read back in the character
+remove_me <- read.table("2_output/remove_me.txt", 
+                        col.names = "idnum",
+                        colClasses = "character")
+
+# Actually remove people using character
+df <- df %>%
+  filter(!(idnum %in% remove_me$idnum))
+
+# Clean up
+rm(who_gets_removed, remove_me)
+```
+
+# Rename and remove some variables
+
+```{r}
+# Coparent
+df <- df %>%
+  rename_all(str_replace_all, "(f4d1)", "Coparent") %>%
+  rename_all(str_replace_all, "(m4d1)", "Coparent")
+
+# Depression
+df <- df %>%
+  rename_all(str_replace_all, "(f4j)", "Depression") %>%
+  rename_all(str_replace_all, "(m4j)", "Depression")
+```
+
+```{r}
+# Coparent Rename
+df <- df %>%
+  rename_all(str_replace_all, "(Coparenta_)", "Coparent_item1_") %>%
+  rename_all(str_replace_all, "(Coparentb_)", "Coparent_item2_") %>%
+  rename_all(str_replace_all, "(Coparentc_)", "Coparent_item3_") %>%
+  rename_all(str_replace_all, "(Coparentd_)", "Coparent_item4_") %>%
+  rename_all(str_replace_all, "(Coparente_)", "Coparent_item5_") %>%
+  rename_all(str_replace_all, "(Coparentf_)", "Coparent_item6_") %>%
+  rename_all(str_replace_all, "(Coparentg_)", "Coparent_item7_") %>%
+  rename_all(str_replace_all, "(Coparenth_)", "Coparent_item8_")
+``` 
+
+```{r}
+# Depression Rename
+df <- df %>%
+  rename_all(str_replace_all, "(Depression5_)", "Depression_Criteria_") %>%
+  rename_all(str_replace_all, "(Depression6_)", "Depression_HowMuchOfDay_") %>%
+  rename_all(str_replace_all, "(Depression7_)", "Depression_HowOften_") %>%
+  rename_all(str_replace_all, "(Depression8_)", "Depression_item1_") %>%
+  rename_all(str_replace_all, "(Depression9_)", "Depression_HowOften1_") %>%
+  rename_all(str_replace_all, "(Depression10_)", "Depression_HowLong1_") %>%
+  rename_all(str_replace_all, "(Depression11_)", "Depression_AlmostEveryday1_") %>%
+  rename_all(str_replace_all, "(Depression12_)", "Depression_item2_") %>%
+  rename_all(str_replace_all, "(Depression13_)", "Depression_LoseGainSameWeight_") %>%
+  rename_all(str_replace_all, "(Depression14_)", "Depression_item3_") %>%
+  rename_all(str_replace_all, "(Depression15_)", "Depression_item4_") %>%
+  rename_all(str_replace_all, "(Depression16_)", "Depression_item5_") %>%
+  rename_all(str_replace_all, "(Depression17_)", "Depression_item6_")
+```
+
+```{r}
+df <- df %>%
+  select(!contains("HowMuchOfDay")) %>%
+  select(!contains("HowOften")) %>%
+  select(!contains("HowLong")) %>%
+  select(!contains("AlmostEveryday")) %>%
+  select(!contains("LoseGainSameWeight"))
+```
+
+```{r}
+# Rename the composite scores
+# These are binary and were calculated by FFCWS
+df <- df %>%
+  rename(CompositeDepression_Mother_Lib_Year5 = cm4md_case_lib_Mother_Year5) %>%
+  rename(CompositeDepression_Mother_Con_Year5 = cm4md_case_con_Mother_Year5) %>%
+  rename(CompositeDepression_Father_Lib_Year5 = cf4md_case_lib_Father_Year5) %>%
+  rename(CompositeDepression_Father_Con_Year5 = cf4md_case_con_Father_Year5)
+
+df <- df %>%
+    mutate(across(.cols = contains("Composite"), 
+                  ~factor(.x)))
+
+df <- df %>%
+  select(!contains("Composite"))
+```
+
+```{r}
+# Don't need these...
+df <- df %>%
+  select(!contains("f1h2")) %>%
+  select(!contains("m1h2"))
+
+df <- df %>%
+  mutate(MotherRaceEth_Baseline = as.factor(cm1ethrace_Mother_Baseline)) %>%
+  mutate(FatherRaceEth_Baseline = as.factor(cf1ethrace_Father_Baseline))
+
+df <- df %>%
+  mutate(MotherRaceEth_String_Baseline = 
+           recode(MotherRaceEth_Baseline, 
+                  "1" = "White, non-Hispanic",
+                  "2" = "Black, non-Hispanic",
+                  "3" = "Hispanic",
+                  "4" = "Other"))
+
+df <- df %>%
+  mutate(FatherRaceEth_String_Baseline = 
+           recode(FatherRaceEth_Baseline, 
+                  "1" = "White, non-Hispanic",
+                  "2" = "Black, non-Hispanic",
+                  "3" = "Hispanic",
+                  "4" = "Other"))
+
+df <- df %>%
+  rename_all(str_replace_all, "(cf1age)", "FathersAge") %>%
+  rename_all(str_replace_all, "(cf1edu)", "FathersEdu") %>%
+  rename_all(str_replace_all, "(cm1age)", "MothersAge") %>%
+  rename_all(str_replace_all, "(cm1edu)", "MothersEdu") %>%
+  rename_all(str_replace_all, "(cm1povca)", "MothersPoverty") %>%
+  rename_all(str_replace_all, "(cf1povca)", "FathersPoverty")
+
+df <- df %>%
+  rename(MotherMarried_Mother_Baseline = cm1marf_Mother_Baseline) %>%
+  rename(MotherCohabit_Mother_Baseline = cm1cohf_Mother_Baseline) %>%
+  rename(ChildGender_Mother_Baseline = cm1bsex_Mother_Baseline)
+
+# Probably don't need these
+df <- df %>%
+  select(!contains("f1h3")) %>%
+  select(!contains("cf1inpov")) %>%
+  select(!contains("cf1eth")) %>%
+  select(!contains("cm1eth")) %>%
+  select(!contains("relf")) %>%
+  select(!contains("m1h3")) %>%
+  select(!contains("m1i4"))
+
+# last minute thing...
+df <- df %>%
+  rename(MotherRace_Mother_Baseline = MotherRaceEth_Baseline) %>%
+  rename(FatherRace_Father_Baseline = FatherRaceEth_Baseline) %>%
+  rename(MotherRaceString_Mother_Baseline = MotherRaceEth_String_Baseline) %>%
+  rename(FatherRaceString_Father_Baseline = FatherRaceEth_String_Baseline)
+```
+
+```{r}
+df <- df %>%
+  select(!contains("String")) %>%
+  select(!contains("Gender")) %>%
+  select(!contains("Cohabit")) %>%
+  select(!contains("Married"))
+```
+
+# Reverse code all the coparenting items
+
+```{r}
+# df %>% select(starts_with("Coparent")) %>% head(., 5) # View the raw variables
+
+df <- df %>%
+    mutate(across(starts_with("Coparent"), ~ # <- the variables that we want to recode
+                    recode(., "1" = 4, "2" = 3, "3" = 2, "4" = 1))) # <- desired recoding scheme
+
+# df %>% select(starts_with("Coparent")) %>% head(., 5)  # View the variables again, now they're reversed
+```
+
+# Make the depression items 0/1 instead of 1/2
+
+The original FFCWS study has 1 mean Yes and 2 mean No. I want to recode all the items so 0 means No and 1 means Yes.
+
+```{r}
+df <- df %>%
+  mutate(across(contains("Depression"), 
+                ~case_when(.x == 2 ~ 0, 
+                           TRUE ~ as.numeric(.x))))
+```
+
+# Calculate subscales
+
+```{r}
+# Coparenting
+df <- df %>%
+  rowwise() %>%
+  mutate(Coparent_Total_Mother = mean(c(
+    Coparent_item1_Mother_Year5,
+    Coparent_item2_Mother_Year5,
+    Coparent_item3_Mother_Year5,
+    Coparent_item4_Mother_Year5,
+    Coparent_item5_Mother_Year5,
+    Coparent_item6_Mother_Year5
+    ), na.rm = TRUE)) %>%
+  ungroup()
+
+df <- df %>%
+  rowwise() %>%
+  mutate(Coparent_Total_Father = mean(c(
+    Coparent_item1_Father_Year5,
+    Coparent_item2_Father_Year5,
+    Coparent_item3_Father_Year5,
+    Coparent_item4_Father_Year5,
+    Coparent_item5_Father_Year5,
+    Coparent_item6_Father_Year5
+    ), na.rm = TRUE)) %>%
+  ungroup()
+```
+
+```{r} 
+# Depression
+df <- df %>%
+  rowwise() %>%
+  mutate(Depression_Total_Mother = mean(c(
+    Depression_item1_Mother_Year5,
+    Depression_item2_Mother_Year5,
+    Depression_item3_Mother_Year5,
+    Depression_item4_Mother_Year5,
+    Depression_item5_Mother_Year5,
+    Depression_item6_Mother_Year5
+    ), na.rm = TRUE)) %>%
+  ungroup()
+
+df <- df %>% 
+  mutate(Depression_Total_Mother = if_else(Depression_Criteria_Mother_Year5 == 0, 0, Depression_Total_Mother)) %>%
+  mutate(Depression_item1_Mother_Year5 = if_else(Depression_Criteria_Mother_Year5 == 0, 0, Depression_item1_Mother_Year5)) %>%
+  mutate(Depression_item2_Mother_Year5 = if_else(Depression_Criteria_Mother_Year5 == 0, 0, Depression_item2_Mother_Year5)) %>%
+  mutate(Depression_item3_Mother_Year5 = if_else(Depression_Criteria_Mother_Year5 == 0, 0, Depression_item3_Mother_Year5)) %>%
+  mutate(Depression_item4_Mother_Year5 = if_else(Depression_Criteria_Mother_Year5 == 0, 0, Depression_item4_Mother_Year5)) %>%
+  mutate(Depression_item5_Mother_Year5 = if_else(Depression_Criteria_Mother_Year5 == 0, 0, Depression_item5_Mother_Year5)) %>%
+  mutate(Depression_item6_Mother_Year5 = if_else(Depression_Criteria_Mother_Year5 == 0, 0, Depression_item6_Mother_Year5))
+
+df <- df %>%
+  rowwise() %>%
+  mutate(Depression_Total_Father = mean(c(
+    Depression_item1_Father_Year5,
+    Depression_item2_Father_Year5,
+    Depression_item3_Father_Year5,
+    Depression_item4_Father_Year5,
+    Depression_item5_Father_Year5,
+    Depression_item6_Father_Year5
+    ), na.rm = TRUE)) %>%
+  ungroup()
+
+df <- df %>% 
+  mutate(Depression_Total_Father = if_else(Depression_Criteria_Father_Year5 == 0, 0, Depression_Total_Father)) %>%
+  mutate(Depression_item1_Father_Year5 = if_else(Depression_Criteria_Father_Year5 == 0, 0, Depression_item1_Father_Year5)) %>%
+  mutate(Depression_item2_Father_Year5 = if_else(Depression_Criteria_Father_Year5 == 0, 0, Depression_item2_Father_Year5)) %>%
+  mutate(Depression_item3_Father_Year5 = if_else(Depression_Criteria_Father_Year5 == 0, 0, Depression_item3_Father_Year5)) %>%
+  mutate(Depression_item4_Father_Year5 = if_else(Depression_Criteria_Father_Year5 == 0, 0, Depression_item4_Father_Year5)) %>%
+  mutate(Depression_item5_Father_Year5 = if_else(Depression_Criteria_Father_Year5 == 0, 0, Depression_item5_Father_Year5)) %>%
+  mutate(Depression_item6_Father_Year5 = if_else(Depression_Criteria_Father_Year5 == 0, 0, Depression_item6_Father_Year5))
+```
+
+```{r}
+df$Depression_Criteria_Mother_Year5 <- NULL
+df$Depression_Criteria_Father_Year5 <- NULL
+```
+
+# Change all characters to factors
+
+Make sure there are no characters in your dataframe, only factors
+
+```{r}
+df <- df %>% mutate(across(where(is.character), as.factor))
+```
+
+# Make sure everything is the right class
+
+Education should be an ordered factor.
+
+```{r}
+sapply(df, class)
+
+df <- df %>%
+  mutate(MothersEdu_Mother_Baseline = factor(MothersEdu_Mother_Baseline
+                                             , levels = c("1", "2", "3", "4")
+                                             )) %>%
+  mutate(FathersEdu_Father_Baseline = factor(FathersEdu_Father_Baseline
+                                             , levels = c("1", "2", "3", "4")
+                                             ))
+```
+
+# Fix NaNs
+
+```{r}
+df <- df %>%
+  mutate(across(everything(), ~replace(., is.nan(.), NA)))
+```
+
+# Save original APIM sample
+
+```{r}
+write.csv(df, "0_data/processed_apim/original_apim_df.csv", row.names = FALSE)
+```
+
+# Write data generation model
+
+```{r}
+myapim <- '
+                        Coparent_Total_Mother  ~ a1*Depression_Total_Mother
+                        Coparent_Total_Father  ~ a2*Depression_Total_Father
+                        Coparent_Total_Mother  ~ p12*Depression_Total_Father
+                        Coparent_Total_Father  ~ p21*Depression_Total_Mother
+                        Depression_Total_Mother ~ mx1*1
+                        Depression_Total_Father ~ mx2*1
+                        Coparent_Total_Mother ~ my1*1
+                        Coparent_Total_Father ~ my2*1
+                        Depression_Total_Mother ~~ vx1*Depression_Total_Mother
+                        Depression_Total_Father ~~ vx2*Depression_Total_Father
+                        Coparent_Total_Mother ~~ vy1*Coparent_Total_Mother
+                        Coparent_Total_Father ~~ vy2*Coparent_Total_Father
+                        Depression_Total_Father ~~ cx*Depression_Total_Mother
+                        Coparent_Total_Father ~~ cy*Coparent_Total_Mother 
+  
+                        a_diff := a1 - a2
+                        p_diff := p12 - p21
+                        k1 := p12/a1
+                        k2 := p21/a2
+                        k_diff := k1 - k2
+                        i_diff := my1 - my2
+                        a_ave := (a1 + a2)/2
+                        p_ave := (p12 + p21)/2
+                        i_ave := (my1 +my2)/2
+                        sum1 := (p12 + a1)/2
+                        sum2 := (p21 + a2)/2
+                        cont1 := a1 - p12
+                        cont2 := a2 - p21
+                        
+'
+```
+
+```{r}
+write_file(myapim, "2_output/myapim.txt")
+```
+
+```{r}
+# Estimate the model 
+apimd <- lavaan::sem(myapim, 
+                     data = df,
+                     fixed.x = FALSE,
+                     missing = "default")
+
+# Examine the model
+original_apim_model <- summary(apimd, fit.measures = TRUE)
+options(width = 100)
+capture.output(original_apim_model, file = "2_output/apim/original_apim_model.txt")
+```
+
+# Make several predictor matrices
+
+## Matrix 1
+
+Ignore parent gender.
+
+```{r}
+imp <- mice(df, maxit = 0, printFlag = FALSE)
+pred1 <- imp$pred
+meth1 <- imp$meth
+
+pred1 <- as.data.frame(imp$pred)
+pred1[pred1==1] <- 0
+
+covariates <- df %>% select(
+  contains("Age") |
+    contains("Edu") | 
+    contains("Poverty") | 
+    contains("Race")) %>% names()
+
+pred1 <- pred1 %>%
+  as.data.frame() %>%
+  rownames_to_column("rownames") %>%
+  mutate(rownames = as.character(rownames))
+
+column_names <- pred1 %>% select(-c(rownames)) %>% colnames()
+
+pred1 <- pred1 %>%
+  mutate(across(starts_with("Coparent"), ~ if_else(str_starts(rownames, "Coparent"), 1, 0))) %>%
+  mutate(across(starts_with("Depression"), ~ if_else(str_starts(rownames, "Depression"), 1, 0)))
+
+# Make covariates a pred1ictor for everything
+pred1[,c(covariates)] <- 1
+
+# Subscale total rows should all be 1
+pred1 <- pred1 %>% 
+  mutate(across(c(where(is.numeric), 
+                  -c(idnum, rownames)), ~ 
+                  case_when(str_detect(rownames, "Total") ~ 1,
+                            TRUE ~ as.numeric(as.character(.)))))
+
+# Remove the `rownames` variable
+pred1 <- pred1 %>% remove_rownames %>% column_to_rownames(var="rownames")
+
+# Make sure nothing predicts itself
+pred1[cbind(seq_len(nrow(pred1)), match(rownames(pred1), colnames(pred1)))] <- 0
+
+# Make a matrix
+pred1 <- as.matrix(pred1)
+rm(covariates_father, covariates_mother, column_names)
+
+meth1["Coparent_Total_Mother"] <- "~I((Coparent_item1_Mother_Year5 + Coparent_item2_Mother_Year5 + Coparent_item3_Mother_Year5 + Coparent_item4_Mother_Year5 + Coparent_item5_Mother_Year5 + Coparent_item6_Mother_Year5)/6)"
+
+meth1["Coparent_Total_Father"] <- "~I((Coparent_item1_Father_Year5 + Coparent_item2_Father_Year5 + Coparent_item3_Father_Year5 + Coparent_item4_Father_Year5 + Coparent_item5_Father_Year5 + Coparent_item6_Father_Year5)/6)"
+
+meth1["Depression_Total_Mother"] <- "~I((Depression_item1_Mother_Year5 + Depression_item2_Mother_Year5 + Depression_item3_Mother_Year5 + Depression_item4_Mother_Year5 + Depression_item5_Mother_Year5 + Depression_item6_Mother_Year5)/6)"
+
+meth1["Depression_Total_Father"] <- "~I((Depression_item1_Father_Year5 + Depression_item2_Father_Year5 + Depression_item3_Father_Year5 + Depression_item4_Father_Year5 + Depression_item5_Father_Year5 + Depression_item6_Father_Year5)/6)"
+```
+
+## Matrix 2
+
+Account for parent gender.
+
+```{r}
+imp <- mice(df, maxit = 0, printFlag = FALSE)
+pred2 <- imp$pred
+meth2 <- imp$meth
+
+pred2 <- as.data.frame(imp$pred)
+pred2[pred2==1] <- 0
+
+covariates_mother <- df %>% select(
+  contains("Age") |
+    contains("Edu") | 
+    contains("Poverty") | 
+    contains("Race")) %>%
+  select(contains("Mother")) %>% names()
+
+covariates_father <- df %>% select(
+  contains("Age") |
+    contains("Edu") | 
+    contains("Poverty") | 
+    contains("Race")) %>%
+  select(contains("Father")) %>% names()
+
+pred2 <- pred2 %>%
+  as.data.frame() %>%
+  rownames_to_column("rownames") %>%
+  mutate(rownames = as.character(rownames))
+
+column_names <- pred2 %>% select(-c(rownames)) %>% colnames()
+
+pred2 <- pred2 %>%
+  mutate(across( (contains("Coparent") & contains("Father")), 
+                 ~ if_else( 
+                   (str_detect(rownames, "Coparent") & str_detect(rownames, "Father")), 1, 0))) %>%
+  mutate(across( (contains("Coparent") & contains("Mother")), 
+                 ~ if_else( 
+                   (str_detect(rownames, "Coparent") & str_detect(rownames, "Mother")), 1, 0))) %>%
+  mutate(across( (contains("Depression") & contains("Father")), 
+                 ~ if_else( 
+                   (str_detect(rownames, "Depression") & str_detect(rownames, "Father")), 1, 0))) %>%
+  mutate(across( (contains("Depression") & contains("Mother")), 
+                 ~ if_else( 
+                   (str_detect(rownames, "Depression") & str_detect(rownames, "Mother")), 1, 0)))
+
+# Make covariates a predictor for everything but also split by parent gender!
+pred2 <- pred2 %>%
+  mutate(across(all_of(covariates_father), ~ case_when(str_detect(rownames, "Father") ~ 1,
+                                                        TRUE ~ as.numeric(as.character(.))))) %>%
+  mutate(across(c(contains("Father")), ~ 
+                  case_when( (str_detect(rownames, "Father")) ~ 1,
+                            TRUE ~ as.numeric(as.character(.)))))
+
+pred2 <- pred2 %>%
+  mutate(across(all_of(covariates_mother), ~ case_when(str_detect(rownames, "Mother") ~ 1,
+                                                        TRUE ~ as.numeric(as.character(.))))) %>%
+  mutate(across(c(contains("Mother")), ~ 
+                  case_when( (str_detect(rownames, "Mother")) ~ 1,
+                            TRUE ~ as.numeric(as.character(.)))))
+
+# Subscale total rows should all be 1, but we need to also split this by parent gender!
+pred2 <- pred2 %>% 
+  mutate(across(contains("Father"), 
+                ~ case_when(str_detect(rownames, "Total") & str_detect(rownames, "Father") ~ 1,
+                            TRUE ~ as.numeric(as.character(.)))))
+
+pred2 <- pred2 %>% 
+  mutate(across(contains("Mother"), 
+                ~ case_when(str_detect(rownames, "Total") & str_detect(rownames, "Mother") ~ 1,
+                            TRUE ~ as.numeric(as.character(.)))))
+
+pred2 <- pred2 %>% remove_rownames %>% column_to_rownames(var="rownames")
+
+# Make sure nothing predicts itself
+pred2[cbind(seq_len(nrow(pred2)), match(rownames(pred2), colnames(pred2)))] <- 0
+
+# Make a matrix
+pred2 <- as.matrix(pred2)
+rm(covariates, column_names)
+
+meth2["Coparent_Total_Mother"] <- "~I((Coparent_item1_Mother_Year5 + Coparent_item2_Mother_Year5 + Coparent_item3_Mother_Year5 + Coparent_item4_Mother_Year5 + Coparent_item5_Mother_Year5 + Coparent_item6_Mother_Year5)/6)"
+
+meth2["Coparent_Total_Father"] <- "~I((Coparent_item1_Father_Year5 + Coparent_item2_Father_Year5 + Coparent_item3_Father_Year5 + Coparent_item4_Father_Year5 + Coparent_item5_Father_Year5 + Coparent_item6_Father_Year5)/6)"
+
+meth2["Depression_Total_Mother"] <- "~I((Depression_item1_Mother_Year5 + Depression_item2_Mother_Year5 + Depression_item3_Mother_Year5 + Depression_item4_Mother_Year5 + Depression_item5_Mother_Year5 + Depression_item6_Mother_Year5)/7)"
+
+meth2["Depression_Total_Father"] <- "~I((Depression_item1_Father_Year5 + Depression_item2_Father_Year5 + Depression_item3_Father_Year5 + Depression_item4_Father_Year5 + Depression_item5_Father_Year5 + Depression_item6_Father_Year5)/7)"
+```
+
+# Make template for missingness
+
+```{r}
+make_missing <- simsem::miss(
+  package = "mice",
+  m = 15,
+  maxit = 30, 
+  seed = 1227,
+  # pmMCAR = .15, # how much missing?
+  pmMAR = .15, # how much is missing?
+  ignoreCols = "idnum",
+  convergentCutoff = 0.75)
+```
+
+# Generate datasets of different sizes
+
+```{r}
+small <- simsem::sim(
+  nRep = 1,
+  model = apimd,
+  n = 200,
+  rawData = df,
+  # miss = make_missing,
+  objMissing = make_missing,
+  lavaanfun = "sem",
+  modelBoot = TRUE,
+  seed = 1227,
+  dataOnly = TRUE) %>% as.data.frame()
+
+medium <- simsem::sim(
+  nRep = 1,
+  model = apimd,
+  n = 500,
+  rawData = df,
+  # miss = make_missing,
+  objMissing = make_missing,
+  lavaanfun = "sem",
+  modelBoot = TRUE,
+  seed = 1227,
+  dataOnly = TRUE) %>% as.data.frame()
+
+large <- simsem::sim(
+  nRep = 1,
+  model = apimd,
+  n = 2000,
+  rawData = df,
+  # miss = make_missing,
+  objMissing = make_missing,
+  lavaanfun = "sem",
+  modelBoot = TRUE,
+  seed = 1227,
+  dataOnly = TRUE) %>% as.data.frame()
+
+rm(make_missing)
+```
+
+# Write out raw simulated data
+
+```{r}
+write.csv(small, "0_data/processed_apim/small.csv")
+write.csv(medium, "0_data/processed_apim/medium.csv")
+write.csv(large, "0_data/processed_apim/large.csv")
+```
+
+# Save copies of the datasets that include subscale totals for quickpred() imputation
+
+```{r}
+small2 <- small
+medium2 <- medium
+large2 <- large
+```
+
+# Fix the overwriting issue with multiply imputed objects
+
+```{r}
+rm(df)
+
+small$Depression_Total_Mother <- NA
+small$Depression_Total_Father <- NA
+small$Coparent_Total_Mother <- NA
+small$Coparent_Total_Father <- NA
+
+medium$Depression_Total_Mother <- NA
+medium$Depression_Total_Father <- NA
+medium$Coparent_Total_Mother <- NA
+medium$Coparent_Total_Father <- NA
+
+large$Depression_Total_Mother <- NA
+large$Depression_Total_Father <- NA
+large$Coparent_Total_Mother <- NA
+large$Coparent_Total_Father <- NA
+```
+
+# Conduct multiple imputaton
+
+```{r}
+setwd("/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/0_data/processed_apim")
+```
+
+## Matrix 1
+
+```{r}
+small.mi1 <- mice::mice(small, 
+                       m = 15,
+                       maxit = 30,
+                       method = meth1,
+                       seed = 1227,
+                       pred = pred1)
+
+write.mice.imputation(mi.res = small.mi1, name = "small.mi1", mids2spss = F)
+small.mi1 <- miceadds::mids2datlist(small.mi1)
+
+medium.mi1 <- mice::mice(medium, 
+                       m = 15,
+                       maxit = 30,
+                       method = meth1,
+                       seed = 1227,
+                       pred = pred1)
+
+write.mice.imputation(mi.res = medium.mi1, name = "medium.mi1", mids2spss = F)
+medium.mi1 <- miceadds::mids2datlist(medium.mi1)
+
+large.mi1 <- mice::mice(large, 
+                       m = 15,
+                       maxit = 30,
+                       method = meth1,
+                       seed = 1227,
+                       pred = pred1)
+
+write.mice.imputation(mi.res = large.mi1, name = "large.mi1", mids2spss = F)
+large.mi1 <- miceadds::mids2datlist(large.mi1)
+```
+
+## Matrix 2
+
+```{r}
+small.mi2 <- mice::mice(small, 
+                       m = 15,
+                       maxit = 30,
+                       method = meth2,
+                       seed = 1227,
+                       pred = pred2)
+
+write.mice.imputation(mi.res = small.mi2, name = "small.mi2", mids2spss = F)
+small.mi2 <- miceadds::mids2datlist(small.mi2)
+
+medium.mi2 <- mice::mice(medium, 
+                       m = 15,
+                       maxit = 30,
+                       method = meth2,
+                       seed = 1227,
+                       pred = pred2)
+
+write.mice.imputation(mi.res = medium.mi2, name = "medium.mi2", mids2spss = F)
+medium.mi2 <- miceadds::mids2datlist(medium.mi2)
+
+large.mi2 <- mice::mice(large, 
+                       m = 15,
+                       maxit = 30,
+                       method = meth2,
+                       seed = 1227,
+                       pred = pred2)
+
+write.mice.imputation(mi.res = large.mi2, name = "large.mi2", mids2spss = F)
+large.mi2 <- miceadds::mids2datlist(large.mi2)
+```
+
+## Matrix 3
+
+AKA no method or predictor matrix! Or a very simple predictor matrix.
+
+```{r}
+smallquick <- quickpred(small2, mincor = 0.2, method = "pearson")
+small.mi3 <- mice::mice(small2, 
+                       m = 15,
+                       maxit = 30,
+                       pred = smallquick,
+                       seed = 1227)
+
+write.mice.imputation(mi.res = small.mi3, name = "small.mi3", mids2spss = F)
+small.mi3 <- miceadds::mids2datlist(small.mi3)
+
+mediumquick <- quickpred(medium2, mincor = 0.2, method = "pearson")
+medium.mi3 <- mice::mice(medium2, 
+                       m = 15,
+                       maxit = 30,
+                       pred = mediumquick,
+                       seed = 1227)
+
+write.mice.imputation(mi.res = medium.mi3, name = "medium.mi3", mids2spss = F)
+medium.mi3 <- miceadds::mids2datlist(medium.mi3)
+
+largequick <- quickpred(large2, mincor = 0.2, method = "pearson")
+large.mi3 <- mice::mice(large2, 
+                       m = 15,
+                       maxit = 30,
+                       pred = largequick,
+                       seed = 1227)
+
+write.mice.imputation(mi.res = large.mi3, name = "large.mi3", mids2spss = F)
+large.mi3 <- miceadds::mids2datlist(large.mi3)
+```

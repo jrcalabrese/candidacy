@@ -1,0 +1,100 @@
+lavaan 0.6.13 ended normally after 42 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        14
+
+                                                  Used       Total
+  Number of observations                          2433        4292
+
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Model Test Baseline Model:
+
+  Test statistic                               537.964
+  Degrees of freedom                                 6
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    1.000
+  Tucker-Lewis Index (TLI)                       1.000
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -4331.737
+  Loglikelihood unrestricted model (H1)      -4331.737
+                                                      
+  Akaike (AIC)                                8691.474
+  Bayesian (BIC)                              8772.631
+  Sample-size adjusted Bayesian (SABIC)       8728.149
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.000
+  90 Percent confidence interval - lower         0.000
+  90 Percent confidence interval - upper         0.000
+  P-value H_0: RMSEA <= 0.050                       NA
+  P-value H_0: RMSEA >= 0.080                       NA
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.000
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Regressions:
+                          Estimate  Std.Err  z-value  P(>|z|)
+  Coparent_Total_Mother ~                                    
+    Dprs_T_M  (a1)          -0.339    0.046   -7.337    0.000
+  Coparent_Total_Father ~                                    
+    Dprs_T_F  (a2)          -0.344    0.043   -8.057    0.000
+  Coparent_Total_Mother ~                                    
+    Dprs_T_F (p12)          -0.273    0.058   -4.745    0.000
+  Coparent_Total_Father ~                                    
+    Dprs_T_M (p21)          -0.138    0.034   -4.027    0.000
+
+Covariances:
+                             Estimate  Std.Err  z-value  P(>|z|)
+  Depression_Total_Mother ~~                                    
+    Dprss_T_F (cx)              0.007    0.001    4.733    0.000
+ .Coparent_Total_Mother ~~                                      
+   .Cprnt_T_F (cy)              0.118    0.007   16.879    0.000
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(>|z|)
+    Dprs_T_M (mx1)    0.122    0.006   20.637    0.000
+    Dprs_T_F (mx2)    0.073    0.005   15.444    0.000
+   .Cprn_T_M (my1)    3.586    0.015  239.697    0.000
+   .Cprn_T_F (my2)    3.758    0.011  338.896    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(>|z|)
+    Dprs_T_M (vx1)    0.085    0.002   34.878    0.000
+    Dprs_T_F (vx2)    0.054    0.002   34.878    0.000
+   .Cprn_T_M (vy1)    0.436    0.012   34.878    0.000
+   .Cprn_T_F (vy2)    0.239    0.007   34.878    0.000
+
+Defined Parameters:
+                   Estimate  Std.Err  z-value  P(>|z|)
+    a_diff            0.005    0.064    0.082    0.934
+    p_diff           -0.135    0.068   -1.992    0.046
+    k1                0.807    0.211    3.820    0.000
+    k2                0.401    0.115    3.471    0.001
+    k_diff            0.406    0.271    1.497    0.134
+    i_diff           -0.172    0.015  -11.444    0.000
+    a_ave            -0.341    0.031  -11.052    0.000
+    p_ave            -0.206    0.033   -6.233    0.000
+    i_ave             3.672    0.011  339.616    0.000
+    sum1             -0.306    0.035   -8.711    0.000
+    sum2             -0.241    0.026   -9.251    0.000
+    cont1            -0.065    0.077   -0.847    0.397
+    cont2            -0.206    0.057   -3.602    0.000
+

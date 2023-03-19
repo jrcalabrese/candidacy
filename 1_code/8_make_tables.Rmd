@@ -1,0 +1,435 @@
+---
+title: "Candidacy project: Load in data and make SEM output for emotion dysregulation data"
+author: "Julianna Calabrese"
+date: "January 11th, 2023"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Prepwork
+
+```{r}
+set.seed(1227)
+setwd("/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis")
+```
+
+```{r}
+#install.packages("Rtools")
+#install.packages(c('devtools', 'curl'))
+#library('devtools')
+#devtools::install_github("simsem/semTools/semTools")
+#install.packages("lavaan", repos = "http://www.da.ugent.be", type = "source")
+```
+
+```{r}
+library(semTools)
+library(lavaan)
+library(tidyverse)
+library(simsem)
+library(mice)
+library(miceadds)
+library(semPlot)
+library(lavaanPlot)
+library(officer)
+library(psych)
+library(rrtable)
+library(strengejacke)
+
+library(ggmice)
+library(micemd)
+library(gtsummary)
+library(expss)
+library(flextable)
+library(devtools)
+#install_github("jrcalabrese/missy")
+library(missy)
+library(docxtractr)
+library(janitor)
+
+options(scipen = 999) # avoids scientific notation
+```
+
+# Descriptive Statistics
+
+## APIM
+
+```{r}
+## APIM Imputed
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/imputed_output", 
+                 pattern = "destat",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/imputed_output", 
+                 pattern = "destat",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Make first row the colnames
+tables <- lapply(tables, function(x) {x %>% row_to_names(row_number = 1)})
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+destatdf1 <- tables
+rm(tablelist, filelist, namelist, tables)
+
+## APIM Non-imputed
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/nonimputed_output", 
+                 pattern = "destat",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/nonimputed_output", 
+                 pattern = "destat",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Make first row the colnames
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+destatdf2 <- tables
+rm(tablelist, filelist, namelist, tables)
+goodnames <- names(destatdf1)
+names(destatdf2) <- goodnames
+destatdf2 <- destatdf2 %>%
+  filter(name != "originalapimrawdestat")
+```
+
+```{r}
+bigdf <- rbind(destatdf1, destatdf2)
+rm(destatdf1, destatdf2)
+bigdf <- bigdf %>%
+  mutate(`Sample Size` = case_when(
+    grepl("small", name) ~ "Small",
+    grepl("medium", name) ~ "Medium",
+    grepl("large", name) ~ "Large"
+    )
+  ) %>%
+  mutate(`Predictor Matrix` = case_when(
+    grepl("1", name) ~ "Liberal",
+    grepl("2", name) ~ "Conservative",
+    grepl("3", name) ~ "Unspecified",
+    grepl("raw", name) ~ "None",
+    )
+  ) %>%
+    mutate(`Variable` = case_when(
+    grepl("Coparent_Total_Mother", Variable) ~ "Maternal coparenting",
+    grepl("Coparent_Total_Father", Variable) ~ "Paternal coparenting",
+    grepl("Depression_Total_Mother", Variable) ~ "Maternal depression",
+    grepl("Depression_Total_Father", Variable) ~ "Paternal depression"
+    )
+  ) %>%
+  select(`Sample Size`, `Predictor Matrix`, everything()) %>%
+  group_by(`Sample Size`, `Predictor Matrix`) %>%
+  select(!name)
+
+goodnames <- names(bigdf)
+```
+
+```{r}
+tab_df(bigdf,
+       title = "Table 2. Descriptive statistics related to parental deperession.",
+       col.header = goodnames,
+       file = "2_output/official_tables/table2.doc")
+```
+
+## Emo Reg
+
+```{r}
+## emoreg Imputed
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/imputed_output", 
+                 pattern = "destat",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/imputed_output", 
+                 pattern = "destat",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Make first row the colnames
+tables <- lapply(tables, function(x) {x %>% row_to_names(row_number = 1)})
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+destatdf1 <- tables
+rm(tablelist, filelist, namelist, tables)
+
+## emoreg Non-imputed
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/nonimputed_output", 
+                 pattern = "destat",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/nonimputed_output", 
+                 pattern = "destat",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Make first row the colnames
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+destatdf2 <- tables
+rm(tablelist, filelist, namelist, tables)
+goodnames <- names(destatdf1)
+names(destatdf2) <- goodnames
+destatdf2 <- destatdf2 %>%
+  filter(name != "originalemoregrawdestat")
+```
+
+```{r}
+bigdf <- rbind(destatdf1, destatdf2)
+rm(destatdf1, destatdf2)
+bigdf <- bigdf %>%
+  mutate(`Sample Size` = case_when(
+    grepl("small", name) ~ "Small",
+    grepl("medium", name) ~ "Medium",
+    grepl("large", name) ~ "Large"
+    )
+  ) %>%
+  mutate(`Predictor Matrix` = case_when(
+    grepl("1", name) ~ "Specified",
+    grepl("2", name) ~ "Unspecified",
+    grepl("raw", name) ~ "None",
+    )
+  ) %>%
+    mutate(`Variable` = case_when(
+    grepl("Coparent_Total_Mother", Variable) ~ "Maternal coparenting",
+    grepl("Coparent_Total_Father", Variable) ~ "Paternal coparenting",
+    grepl("CBCL", Variable) ~ "Child emotion dysregulation"
+    )
+  ) %>%
+  select(`Sample Size`, `Predictor Matrix`, everything()) %>%
+  group_by(`Sample Size`, `Predictor Matrix`) %>%
+  select(!name)
+
+goodnames <- names(bigdf)
+```
+
+```{r}
+tab_df(bigdf,
+       title = "Table 3. Descriptive statistics related to child emotion dysregulation.",
+       col.header = goodnames,
+       file = "2_output/official_tables/table3.doc")
+```
+
+```{r}
+rm(list = ls())
+```
+
+# Cronbach's alpha
+
+## APIM
+
+```{r}
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/imputed_output", 
+                 pattern = "alpha",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/imputed_output", 
+                 pattern = "alpha",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Remove first row and rename all columns
+tables <- lapply(tables, tail, -1)
+tables <- lapply(tables, head, 1)
+tables <- lapply(tables, setNames, c("RemoveMe", "value"))
+tables <- lapply(tables, function(x) {x <- x %>% select(-RemoveMe)})
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+alphadf1 <- tables
+rm(tablelist, filelist, namelist, tables)
+
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/nonimputed_output", 
+                 pattern = "alpha",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/apim/nonimputed_output", 
+                 pattern = "alpha",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Only keep the first column in all the dataframes
+ tables <- lapply(tables, function(x) x%>% select(raw_alpha))
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+alphadf2 <- tables
+rm(tablelist, filelist, namelist, tables)
+alphadf2 <- alphadf2 %>% rename(value = raw_alpha)
+bigdf <- rbind(alphadf1, alphadf2)
+rm(alphadf1, alphadf2)
+
+bigdf <- bigdf %>%
+  filter(!grepl("original", name))
+
+bigdf <- bigdf %>%
+  mutate(`Sample Size` = case_when(
+    grepl("small", name) ~ "Small",
+    grepl("medium", name) ~ "Medium",
+    grepl("large", name) ~ "Large"
+    )
+  ) %>%
+  mutate(`Predictor Matrix` = case_when(
+    grepl("1", name) ~ "Liberal",
+    grepl("2", name) ~ "Conservative",
+    grepl("3", name) ~ "Unspecified",
+    TRUE ~ "Raw"
+    )
+  ) %>%
+    mutate(`Variable` = case_when(
+    grepl("coparentmom", name) ~ "Maternal coparenting",
+    grepl("coparentdad", name) ~ "Paternal coparenting",
+    grepl("depressionmom", name) ~ "Maternal depression",
+    grepl("depressiondad", name) ~ "Paternal depression"
+    )
+  ) %>%
+  select(`Sample Size`, `Predictor Matrix`, everything()) %>%
+  group_by(`Sample Size`, `Predictor Matrix`) %>%
+  select(!name) %>%
+  rename(Alpha = value) %>%
+  select(`Sample Size`, `Predictor Matrix`, `Variable`, `Alpha`)
+
+goodnames <- names(bigdf)
+```
+
+```{r}
+tab_df(bigdf,
+       title = "Table 4. Internal consistency related to parental depression.",
+       col.header = goodnames,
+       file = "2_output/official_tables/table4.doc")
+```
+
+```{r}
+rm(list = ls())
+```
+
+## Emo Reg
+
+```{r}
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/imputed_output", 
+                 pattern = "alpha",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/imputed_output", 
+                 pattern = "alpha",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Remove first row and rename all columns
+tables <- lapply(tables, tail, -1)
+tables <- lapply(tables, head, 1)
+tables <- lapply(tables, setNames, c("RemoveMe", "value"))
+tables <- lapply(tables, function(x) {x <- x %>% select(-RemoveMe)})
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+alphadf1 <- tables
+rm(tablelist, filelist, namelist, tables)
+
+filelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/nonimputed_output", 
+                 pattern = "alpha",
+                 full.names = TRUE)
+
+namelist <- list.files(path = "/Users/Julianna/OneDrive - The Ohio State University/candidacy/data_analysis/2_output/emoreg/nonimputed_output", 
+                 pattern = "alpha",
+                 full.names = FALSE) %>% str_replace(".docx", "")
+
+# Extract as a list, turn into dataframes
+tablelist <- lapply(filelist, read_docx)
+tables <- lapply(tablelist, docx_extract_all_tbls)
+tables <- lapply(tables, as.data.frame)
+
+# Only keep the first column in all the dataframes
+ tables <- lapply(tables, function(x) x%>% select(raw_alpha))
+names(tables) <- namelist
+tables <- bind_rows(tables, .id = "name")
+alphadf2 <- tables
+rm(tablelist, filelist, namelist, tables)
+alphadf2 <- alphadf2 %>% rename(value = raw_alpha)
+bigdf <- rbind(alphadf1, alphadf2)
+rm(alphadf1, alphadf2)
+
+bigdf <- bigdf %>%
+  filter(!grepl("original", name))
+```
+
+```{r}
+bigdf <- bigdf %>%
+  mutate(`Sample Size` = case_when(
+    grepl("small", name) ~ "Small",
+    grepl("medium", name) ~ "Medium",
+    grepl("large", name) ~ "Large"
+    )
+  ) %>%
+  mutate(`Predictor Matrix` = case_when(
+    grepl("1", name) ~ "Specified",
+    grepl("2", name) ~ "Unspecified",
+    TRUE ~ "Raw"
+    )
+  ) %>%
+    mutate(`Variable` = case_when(
+    grepl("coparentmom", name) ~ "Maternal coparenting",
+    grepl("coparentdad", name) ~ "Paternal coparenting",
+    grepl("cbcl", name) ~ "Child emotion dysregulation"
+    )
+  ) %>%
+  select(`Sample Size`, `Predictor Matrix`, everything()) %>%
+  group_by(`Sample Size`, `Predictor Matrix`) %>%
+  select(!name) %>%
+  rename(Alpha = value) %>%
+  select(`Sample Size`, `Predictor Matrix`, `Variable`, `Alpha`)
+
+goodnames <- names(bigdf)
+```
+
+```{r}
+tab_df(bigdf,
+       title = "Table 5. Internal consistency related to child emotion dysregulation",
+       col.header = goodnames,
+       file = "2_output/official_tables/table5.doc")
+```
+
+```{r}
+rm(list = ls())
+```
+
+# Table 1
+
+```{r}
+items <- read.csv("0_data/preprocessed/scales.csv") %>%
+  rename(Scale = scale) %>%
+  rename(`Item Number` = item_num) %>%
+  rename(`Item Text` = item)
+
+goodnames <- names(items)
+
+tab_df(items,
+       title = "Table 1. Self-report items.",
+       col.header = goodnames,
+       file = "2_output/official_tables/table1.doc")
+
+```
+

@@ -1,0 +1,543 @@
+<table style="border-collapse:collapse; border:none;">
+<caption style="font-weight: bold; text-align:left;">Table 2. Descriptive statistics related to parental deperession.</caption>
+<tr>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; text-align:left; ">Sample Size</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">Predictor Matrix</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">Variable</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">Mean</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">Standard Deviation</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; ">Minimum</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col7">Maximum</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col8">Standard Error</th>
+<th style="border-top: double; text-align:center; font-style:italic; font-weight:normal; padding:0.2cm; border-bottom:1px solid black; col9"># of Missing Values</th>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.70</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.65</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.54</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.14</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.30</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.09</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.44</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.71</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.65</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.54</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.12</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.26</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">0.86</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.08</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.21</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">0.86</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.43</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.74</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.65</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.59</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.13</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.30</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.08</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.41</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.73</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.03</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.67</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.56</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.13</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.29</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.09</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.24</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.41</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.73</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.03</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.67</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.55</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.11</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">0.86</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.07</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.20</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">0.86</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.40</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.78</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.03</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.68</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.59</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.03</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.12</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.29</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.08</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.42</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.70</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.05</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.49</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.33</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.03</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.13</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.29</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Liberal</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.11</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.26</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.43</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.05</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.69</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.49</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.33</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.03</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.11</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">0.86</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Conservative</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.09</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.23</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">0.86</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.43</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.71</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.05</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.71</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.51</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.33</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.04</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.13</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.29</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Unspecified</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.11</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.27</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">0</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.53</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.67</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">1098.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.70</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.52</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">1098.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.12</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.29</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">1098.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Large</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.07</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.23</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">1098.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.48</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.74</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.04</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">245.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.71</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.54</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.03</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">245.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.11</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.28</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">245.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Medium</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.07</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.23</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.01</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">245.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.50</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.68</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.06</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">75.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Paternal coparenting</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">3.73</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.48</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">1.33</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">4.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.04</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">75.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">Maternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.14</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.31</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col8">0.03</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; col9">75.00</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; border-bottom: double; ">Small</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">None</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">Paternal depression</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">0.09</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">0.25</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; ">0.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; col7">1.00</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; col8">0.02</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center; border-bottom: double; col9">75.00</td>
+</tr>
+</table>
+
